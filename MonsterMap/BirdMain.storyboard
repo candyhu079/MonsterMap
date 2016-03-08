@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BV1-FR-VrT">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <scenes>
+        <!--Game View Controller-->
+        <scene sceneID="tXr-a1-R10">
+            <objects>
+                <viewController storyboardIdentifier="MapView" id="BV1-FR-VrT" customClass="GameViewController" customModule="MonsterMap" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
+                        <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
+                    </layoutGuides>
+                    <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sky" translatesAutoresizingMaskIntoConstraints="NO" id="bzZ-By-JH9">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LiE-L6-qJe">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </mapView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="mapFrame" translatesAutoresizingMaskIntoConstraints="NO" id="0Bi-8F-R7v">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zw5-3h-g2V">
+                                <rect key="frame" x="42" y="15" width="35" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="35" id="oCl-Zo-Zd4"/>
+                                    <constraint firstAttribute="height" constant="30" id="sa7-Tv-KZo"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" backgroundImage="mapBackButton"/>
+                                <variation key="heightClass=regular-widthClass=compact" ambiguous="YES" misplaced="YES">
+                                    <rect key="frame" x="20" y="20" width="35" height="30"/>
+                                </variation>
+                                <connections>
+                                    <action selector="mapBackButtonPressed:" destination="BV1-FR-VrT" eventType="touchUpInside" id="V6Z-m3-EpK"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="bzZ-By-JH9" secondAttribute="trailing" constant="-20" id="11Z-Q2-Gkw"/>
+                            <constraint firstItem="bzZ-By-JH9" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leadingMargin" constant="-20" id="1mW-9X-EYJ"/>
+                            <constraint firstItem="0Bi-8F-R7v" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="5eI-QY-pFz"/>
+                            <constraint firstItem="Zw5-3h-g2V" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" multiplier="0.2" id="AgX-JF-azU"/>
+                            <constraint firstAttribute="trailing" secondItem="LiE-L6-qJe" secondAttribute="trailing" id="DbY-Nb-mAQ"/>
+                            <constraint firstItem="LiE-L6-qJe" firstAttribute="leading" secondItem="0Bi-8F-R7v" secondAttribute="leading" id="IIO-hF-T5O"/>
+                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="bzZ-By-JH9" secondAttribute="bottom" id="Q7a-qP-JIr"/>
+                            <constraint firstItem="LiE-L6-qJe" firstAttribute="top" secondItem="0Bi-8F-R7v" secondAttribute="top" id="Z5Z-pi-94f"/>
+                            <constraint firstItem="0Bi-8F-R7v" firstAttribute="bottom" secondItem="qHh-Mt-9TT" secondAttribute="top" id="jWk-yj-qME"/>
+                            <constraint firstItem="0Bi-8F-R7v" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="oJJ-1e-R7f"/>
+                            <constraint firstItem="LiE-L6-qJe" firstAttribute="bottom" secondItem="qHh-Mt-9TT" secondAttribute="top" id="pj5-sg-bai"/>
+                            <constraint firstItem="LiE-L6-qJe" firstAttribute="trailing" secondItem="0Bi-8F-R7v" secondAttribute="trailing" id="qn2-wr-OYg"/>
+                            <constraint firstItem="bzZ-By-JH9" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="topMargin" id="yLS-xe-KDV"/>
+                            <constraint firstItem="Zw5-3h-g2V" firstAttribute="centerY" secondItem="3se-qz-xqx" secondAttribute="centerY" multiplier="0.1" id="zOd-7W-Y6L"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="MapBackButtonHeight" destination="sa7-Tv-KZo" id="Inb-P7-Zec"/>
+                        <outlet property="image" destination="0Bi-8F-R7v" id="Q3S-cq-Ipm"/>
+                        <outlet property="map" destination="LiE-L6-qJe" id="gxI-qu-Fd3"/>
+                        <outlet property="mapBackButtonWidth" destination="oCl-Zo-Zd4" id="P0W-mi-WDt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="390" y="208"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="mapBackButton" width="35" height="30"/>
+        <image name="mapFrame" width="320" height="568"/>
+        <image name="sky" width="320" height="568"/>
+    </resources>
+</document>
