@@ -296,8 +296,7 @@ class BackpackScene: SKScene {
         if touchBeganLocation == location{
             if nodeTouchedName == "backButton"{
                 //過場效果
-//                let tvc = view?.nextResponder()?.nextResponder() as! ThreeIslandsViewController
-//                tvc.
+                self.backPackDelegate?.passCoin(NSInteger(Player.playerSingleton().coin))
                 let transition = CATransition()
                 transition.duration = 0.4
                 transition.type = kCATransitionMoveIn
@@ -381,7 +380,6 @@ class BackpackScene: SKScene {
                         if theItemQuantity > 0{
                             showSomeWordForOneSec("賣出\(itemName.text!)")
                             Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                            self.backPackDelegate?.passCoin(NSInteger(Player.playerSingleton().coin))
                         setQuantity("http://api.leolin.me/sellItem",theNode: a, quantity: theItemQuantity)
                         }
                         break
@@ -395,7 +393,6 @@ class BackpackScene: SKScene {
                         if theItemQuantity > 0{
                             showSomeWordForOneSec("賣出\(decorationName.text!)")
                             Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                            self.backPackDelegate?.passCoin(Int(Player.playerSingleton().coin))
                         setQuantity("http://api.leolin.me/sellDecoration",theNode: a, quantity: theItemQuantity)
                         }
                         break
@@ -409,7 +406,6 @@ class BackpackScene: SKScene {
                     if a.userData?.objectForKey("id")?.integerValue == monsterID{
                         let theMonsterName:String=a.userData?.objectForKey("name") as! String
                         Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                        self.backPackDelegate?.passCoin(Int(Player.playerSingleton().coin))
                         alamoRequsetUpdate("http://api.leolin.me/sellMonster", parameter: ["monsterName":theMonsterName,"monsterId":monsterID], completion: { (inner) -> Void in
                         })
                         print(a.name!.hasSuffix("\(oldMonsterCount)"))
