@@ -57,7 +57,7 @@ class ArenaRankEntranceScene: SKScene {
         enemy3Image.fillColor=SKColor.whiteColor()
         addChild(enemy3Image)
         
-        createClearBackground()
+        runClearBackgroundAction()
         alamoRequset((userData?.objectForKey("URL"))! as! String) { (inner) -> Void in
             do{
                 let result=try inner()
@@ -81,9 +81,6 @@ class ArenaRankEntranceScene: SKScene {
                             let image=try inner()
                                 (self.childNodeWithName("enemy\(i)Image") as! SKShapeNode).fillTexture=SKTexture(image: image)
 //                            (self.childNodeWithName("enemy\(i)Image") as! SKSpriteNode).texture=SKTexture(image: image)
-                            if i==3{
-                                self.removeClearBackground()
-                            }
                         }catch let error{
                             print(error)
                         }
@@ -125,7 +122,7 @@ class ArenaRankEntranceScene: SKScene {
                 view?.presentScene(scene)
             }
         }else if nodeTouchedName == "switchButton"{
-            createClearBackground()
+            runClearBackgroundAction()
             var numberArray:[Int]=[]
             var gotThreeNumber=false
             while(!gotThreeNumber){
@@ -144,9 +141,6 @@ class ArenaRankEntranceScene: SKScene {
                     do{
                         let image=try inner()
                         (self.childNodeWithName("enemy\(i)Image") as! SKShapeNode).fillTexture=SKTexture(image: image)
-                        if i==3{
-                            self.removeClearBackground()
-                        }
                     }catch let error{
                         print(error)
                     }
@@ -252,5 +246,15 @@ class ArenaRankEntranceScene: SKScene {
         if let b=childNodeWithName("clearBackground"){
             b.removeFromParent()
         }
+    }
+    func runClearBackgroundAction(){
+        let runCreateClearBackground=SKAction.runBlock { () -> Void in
+            self.createClearBackground()
+        }
+        let runRemove=SKAction.runBlock { () -> Void in
+            self.removeClearBackground()
+        }
+        let waitDuration1=SKAction.waitForDuration(1)
+        runAction(SKAction.sequence([runCreateClearBackground,waitDuration1,runRemove]))
     }
 }
