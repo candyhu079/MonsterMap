@@ -28,7 +28,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
     var withinRange:Bool!
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
-    var monsterInfoType=["a":"a"]
+    var monsterInfoType=[String:String]()
     var monsterNameToDetectRepeat:[String]=["name"]
     let mapMonsterLocationURL="http://api.leolin.me/updateLocation"
     let mapOtherUserLocationURL="http://api.leolin.me/anotherUserNearToYou"

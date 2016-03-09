@@ -2128,14 +2128,14 @@ class ArenaMonsterBattleScene: SKScene {
             if let scene=ArenaEntranceScene(fileNamed: "ArenaEntranceScene"){
                 scene.scaleMode = .Fill
                 view?.presentScene(scene)
-            }else if userData?.objectForKey("where") as! String == "friend"{
+            }
+        }else if userData?.objectForKey("where") as! String == "friend"{
                 if let scene=SocialScene(fileNamed: "SocialScene"){
                     scene.scaleMode = .Fill
                     view?.presentScene(scene)
                 }
             }
         }
-    }
     func makeSomeButtonNoise(){
         do{
             let voiceURL = NSBundle.mainBundle().URLForResource("button_press", withExtension: "mp3")

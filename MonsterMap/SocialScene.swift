@@ -139,6 +139,7 @@ class SocialScene: SKScene {
         let loadAction = SKAction.repeatActionForever(action1)
         loadingAnimate.runAction(loadAction)
         
+        
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
 
         //抓取伺服器好友資料列表
@@ -205,10 +206,13 @@ class SocialScene: SKScene {
                     friendCellNew.userData?.setObject(result[i]["friendRank"]!, forKey: "friendRank")
                     
                     positionRow++
+                    //if friend button pressed
+                    if self.userData?.objectForKey("fromWhere") as! String == "friendButtonPressed"{
                     if self.friendCount != 0 {
                         self.friendCell.hidden = false
                         
                         loadingAnimate.hidden = true
+                    }
                     }
                 }
             }catch let error{
@@ -244,6 +248,11 @@ class SocialScene: SKScene {
                     
                     positionRow++
                     self.messageCell.hidden = true
+                }
+                //if mail button pressed
+                if self.userData?.objectForKey("fromWhere") as! String == "mailButtonPressed"{
+                    self.showMessagePage()
+                    loadingAnimate.hidden = true
                 }
             }catch let error{
                 print(error)
@@ -347,9 +356,22 @@ class SocialScene: SKScene {
         let touchLocationForMailList = touch?.locationInNode(messageCell)
         let touchLocationForReadMailPage = touch?.locationInNode(readMailPage)
         let touchLocationForConfirmInvite = touch?.locationInNode(inviteCell)
+        let nodeTouched=nodeAtPoint(touchEndedLocation)
+        let nodeTouchedName=nodeTouched.name
         //點擊退出好友詳細資訊視窗
         if touchBeganLocation == touchEndedLocation {
-            if friendDetailCancelBtn.containsPoint(touchLocationForFriendDetailList!) {
+            if nodeTouchedName == "friendBattleBtn"{
+                if let scene=ArenaMonsterBattleScene(fileNamed: "ArenaMonsterBattleScene"){
+                    scene.scaleMode = .Fill
+                    scene.userData=NSMutableDictionary()
+                    scene.userData?.setObject((friendDeleteBtn.userData?.objectForKey("friendId"))!, forKey: "id")
+//                    scene.userData?.setObject(userData?.objectForKey("image") as! UIImage, forKey: "image")
+                    scene.userData?.setObject("practice", forKey: "arenaType")
+                    scene.userData?.setObject("friend", forKey: "where")
+                    view?.presentScene(scene)
+                }
+                
+            }else if friendDetailCancelBtn.containsPoint(touchLocationForFriendDetailList!) {
                 hideFriendDetail()
         //點擊傳送信件給好友
             }else if friendDetailMessageBtn.containsPoint(touchLocationForFriendDetailList!){

@@ -412,6 +412,18 @@
     [self.view addSubview:view];
     SKScene *scene=[SocialScene nodeWithFileNamed:@"SocialScene"];
     scene.scaleMode = SKSceneScaleModeFill;
+    scene.userData=[[NSMutableDictionary alloc]init];
+    [scene.userData setObject:@"friendButtonPressed" forKey:@"fromWhere"];
+    [view presentScene:scene];
+}
+- (IBAction)mailButtonPressed:(id)sender {
+    CGRect viewRect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+    SKView * view=[[SKView alloc]initWithFrame:viewRect];
+    [self.view addSubview:view];
+    SKScene *scene=[SocialScene nodeWithFileNamed:@"SocialScene"];
+    scene.scaleMode = SKSceneScaleModeFill;
+    scene.userData=[[NSMutableDictionary alloc]init];
+    [scene.userData setObject:@"mailButtonPressed" forKey:@"fromWhere"];
     [view presentScene:scene];
 }
 
