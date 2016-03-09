@@ -210,7 +210,6 @@ class SocialScene: SKScene {
                     if self.userData?.objectForKey("fromWhere") as! String == "friendButtonPressed"{
                     if self.friendCount != 0 {
                         self.friendCell.hidden = false
-                        
                         loadingAnimate.hidden = true
                     }
                     }

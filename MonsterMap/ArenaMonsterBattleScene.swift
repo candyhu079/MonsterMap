@@ -2132,6 +2132,8 @@ class ArenaMonsterBattleScene: SKScene {
         }else if userData?.objectForKey("where") as! String == "friend"{
                 if let scene=SocialScene(fileNamed: "SocialScene"){
                     scene.scaleMode = .Fill
+                    scene.userData=NSMutableDictionary()
+                    scene.userData?.setObject("friendButtonPressed", forKey: "fromWhere")
                     view?.presentScene(scene)
                 }
             }
