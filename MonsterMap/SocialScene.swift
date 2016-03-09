@@ -8,23 +8,23 @@
 
 import Foundation
 import SpriteKit
-//import UIKit
+import UIKit
 
 import Alamofire
 import AlamofireImage
 import SwiftyJSON
-import CoreData
-/*,UITextViewDelegate*/
 class SocialScene: SKScene {
     
     //資料庫連結
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
+//    let headers = ["token":"5566"]
     let friendListURL = "http://api.leolin.me/friendList"
     let mailListURL = "http://api.leolin.me/receiveMail"
     let inviteListURL = "http://api.leolin.me/beInvitedList"
     let deleteFriendURL = "http://api.leolin.me/deleteFriend"
     let confirmInvitedURL = "http://api.leolin.me/confirmInvited"
+    let sendMailURL = "http://api.leolin.me/sendMail"
     
     //社群系統主畫面按鈕
     var returnBtn:SKSpriteNode!
@@ -61,6 +61,7 @@ class SocialScene: SKScene {
     var messageCell:SKSpriteNode!
     var messageInfo:String!
     var sendMailPage:SKSpriteNode!
+    var sendMailToLabel:SKLabelNode!
     var sendMailPageSendBtn:SKSpriteNode!
     var sendMailPageCancelBtn:SKSpriteNode!
     var readMailPage:SKSpriteNode!
@@ -68,43 +69,17 @@ class SocialScene: SKScene {
     var readMailPageSendFromLabel:SKLabelNode!
     var readMailPageMessageLabel:SKLabelNode!
     
-    //做一個TextField在Scene裡面，輸入訊息用
-//    var mailTextView:UITextView!
-//    var mailTextField:UITextField = UITextField(frame: CGRect(x: 160, y: 250, width: 180.00, height: 280.00))
+    //做一個TextView，輸入訊息傳信用
+    var mailTextView:UITextView!
     
     //交友邀請物件
     var inviteCount:Int!
     var inviteCell:SKSpriteNode!
-    var inviteAcceptBtn:SKSpriteNode!
-    var inviteCancelBtn:SKSpriteNode!
+    
+    var timer = NSTimer()
     
     override func didMoveToView(view: SKView) {
         
-        //self.view!.addSubview(textField)
-        //textField.placeholder = "在此輸入訊息"
-        //textField.hidden = true
-        // Close keyboard
-//        backgroundColor = SKColor.redColor()
-        
-//        let mailTextView = UITextView(frame: CGRect(x: 0, y: 0, width: 330.0, height: 330.0))
-//        mailTextView.center = CGPointMake(200.0, 300.0)
-//        mailTextView.backgroundColor = UIColor.whiteColor()
-//        mailTextView.translatesAutoresizingMaskIntoConstraints = false
-//        self.view?.addSubview(mailTextView)
-//        mailTextView.hidden = true
-//        self.view!.backgroundColor = UIColor.redColor()
-//        self.view!.layer.borderWidth = 10;
-//        self.view!.layer.borderColor =  UIColor.redColor().CGColor
-        
-//        mailTextView.delegate = self
-        
-//        func yourTextView(textView: UITextView!, shouldChangeTextInRange: NSRange, replacementText: NSString!) -> Bool {
-//            if (replacementText == "\n")  {
-//                mailTextView.resignFirstResponder()
-//                return false
-//            }
-//            return true
-//        }
         headers=["token":token]
         //社群系統主畫面按鈕
         returnBtn = childNodeWithName("returnBtn") as! SKSpriteNode
@@ -121,7 +96,7 @@ class SocialScene: SKScene {
         
         //好友列表物件
         friendCell = childNodeWithName("friendCell") as! SKSpriteNode
-//        friendPicture = friendCell.childNodeWithName("friendPicture") as! SKSpriteNode
+        friendCell.position.y = 440 //加了這行位置之後解決了第一次進好友列表畫面滾動指令錯亂的情況
         self.friendCell.hidden = true
         
         //點擊好友資訊視窗
@@ -139,6 +114,7 @@ class SocialScene: SKScene {
         self.messageCell.hidden = true
 
         sendMailPage = childNodeWithName("sendMailPage") as! SKSpriteNode
+        sendMailToLabel = sendMailPage.childNodeWithName("sendMailToLabel") as! SKLabelNode
         sendMailPageSendBtn = sendMailPage.childNodeWithName("sendMailPageSendBtn") as! SKSpriteNode
         sendMailPageCancelBtn = sendMailPage.childNodeWithName("sendMailPageCancelBtn") as! SKSpriteNode
         self.sendMailPage.hidden = true
@@ -146,24 +122,27 @@ class SocialScene: SKScene {
         readMailPage = childNodeWithName("readMailPage") as! SKSpriteNode
         readMailPageCloseBtn = readMailPage.childNodeWithName("readMailPageCloseBtn") as! SKSpriteNode
         readMailPageSendFromLabel = readMailPage.childNodeWithName("readMailPageSendFromLabel") as! SKLabelNode
-        readMailPageMessageLabel = readMailPage.childNodeWithName("readMailPageMessageLabel") as! SKLabelNode
 
         self.readMailPage.hidden = true
 
-        //做一個TextField在Scene裡面，輸入訊息用
-//        mailTextField = UITextField(frame: CGRect(x: 160, y: 250, width: 180.00, height: 280.00))
-//        mailTextField.backgroundColor = UIColor.redColor()
-//        self.view?.addSubview(mailTextField)
-//        mailTextField.hidden = true
-
         //交友邀請物件
         inviteCell = childNodeWithName("inviteCell") as! SKSpriteNode
-//        inviteAcceptBtn = inviteCell.childNodeWithName("inviteAcceptBtn") as! SKSpriteNode
-//        inviteCancelBtn = inviteCell.childNodeWithName("inviteCancelBtn") as! SKSpriteNode
         self.inviteCell.hidden = true
         
+        //Loading Animate
+        let loadingAnimate = childNodeWithName("loadingImage") as! SKSpriteNode
+        let step1 = SKTexture(imageNamed: "loadingImage")
+        let step2 = SKTexture(imageNamed: "loadingImage2")
+        let step3 = SKTexture(imageNamed: "loadingImage3")
+        let step4 = SKTexture(imageNamed: "loadingImage4")
+        let action1 = SKAction.animateWithTextures([step1,step2,step3,step4], timePerFrame: 0.2)
+        let loadAction = SKAction.repeatActionForever(action1)
+        loadingAnimate.runAction(loadAction)
+        
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+
         //抓取伺服器好友資料列表
-        alamoRequset(friendListURL, headers: headers) { (inner) -> Void in
+        self.alamoRequset(self.friendListURL, headers: self.headers) { (inner) -> Void in
             do{
                 var positionRow = 0
                 let result=try inner()
@@ -180,17 +159,13 @@ class SocialScene: SKScene {
 
                     //朋友大頭貼
                     let friendPictureString = "http://api.leolin.me" + (result[i]["friendPicturePath"]! as! String)
-//                    print(friendPictureString)
                     let url = NSURL(string:friendPictureString)
-                    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
 //                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         let picData = NSData(contentsOfURL:url!)
                         let picImage = UIImage(data: picData!)
                         if picImage != nil{
                             let picTexture = SKTexture(image: picImage!)
                             let friendPictureNew = SKSpriteNode(texture: picTexture, size: CGSize(width: 80, height: 80))
-//                            print(friendCellNew.description)
-//                            print(friendPictureNew.description)
                             
                             friendCellNew.addChild(friendPictureNew)
                             friendPictureNew.name = ("friendPictureNew\(i)")
@@ -207,7 +182,6 @@ class SocialScene: SKScene {
                             friendPictureNew.zPosition = -1
                             //     })
                         }
-//                    })
 
                     //朋友的暱稱
                     let friendNameLabelNew = SKLabelNode(text: result[i]["friendNickname"]! as? String)
@@ -233,6 +207,8 @@ class SocialScene: SKScene {
                     positionRow++
                     if self.friendCount != 0 {
                         self.friendCell.hidden = false
+                        
+                        loadingAnimate.hidden = true
                     }
                 }
             }catch let error{
@@ -241,7 +217,7 @@ class SocialScene: SKScene {
         }
         
         //抓取訊息匣
-        alamoRequset(mailListURL,headers: headers){ (inner) -> Void in
+        self.alamoRequset(self.mailListURL,headers: self.headers){ (inner) -> Void in
             do{
                 var positionRow = 0
                 let result=try inner()
@@ -275,7 +251,7 @@ class SocialScene: SKScene {
         }
 
         //抓取朋友邀請清單
-        alamoRequset(inviteListURL,headers: headers){ (inner) -> Void in
+        self.alamoRequset(self.inviteListURL,headers: self.headers){ (inner) -> Void in
             do{
                 var positionRow = 0
                 let result=try inner()
@@ -304,12 +280,18 @@ class SocialScene: SKScene {
                     let inviteAcceptBtn = SKSpriteNode(imageNamed: "inviteAcceptBtn")
                     inviteCellNew.addChild(inviteAcceptBtn)
                     inviteAcceptBtn.name = ("inviteAcceptBtn\(i)")
-                    print("inviteacbtn:\(inviteAcceptBtn.name)")
                     inviteAcceptBtn.position = CGPoint(x:35, y:1)
                     inviteAcceptBtn.userData = NSMutableDictionary()
-                    print("result\(result[i]["friendId"])")
                     inviteAcceptBtn.userData?.setObject(result[i]["friendId"]!, forKey: "friendId")
-                    print(inviteAcceptBtn.userData)
+                    print(inviteAcceptBtn.frame)
+                    
+                    //取消按鈕
+                    let inviteCancelBtn = SKSpriteNode(imageNamed: "inviteCancelBtn")
+                    inviteCellNew.addChild(inviteCancelBtn)
+                    inviteCancelBtn.name = ("inviteCancelBtn\(i)")
+                    inviteCancelBtn.position = CGPoint(x:104, y:1)
+                    inviteCancelBtn.userData = NSMutableDictionary()
+                    inviteCancelBtn.userData?.setObject(result[i]["friendId"]!, forKey: "friendId")
                     
                     positionRow++
                     self.inviteCell.hidden = true
@@ -318,36 +300,48 @@ class SocialScene: SKScene {
                 print(error)
             }
         }
-
+//        })
+//                loadingAnimate.hidden = true
     }
     
     //各種觸碰指令
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
+        self.view!.endEditing(true)
+        if sendMailPage.hidden == false {
+            self.view!.endEditing(true)
+        }
         let touch = touches.first
         touchBeganLocation = touch?.locationInNode(self)
         
         if returnBtn.containsPoint(touchBeganLocation!){
-            backToMainPage()
+            if friendDetailWindow.hidden == true {
+                if readMailPage.hidden == true {
+                    backToMainPage()
+                }
+            }
         }
         if friendListBtn.containsPoint(touchBeganLocation!){
-            showFriendList()
+            if readMailPage.hidden == true {
+                showFriendList()
+            }
         }
         if messagePageBtn.containsPoint(touchBeganLocation!){
-            showMessagePage()
+            if friendDetailWindow.hidden == true {
+                showMessagePage()
+            }
         }
         if invitePageBtn.containsPoint(touchBeganLocation!){
-            showInvitePage()
+            if friendDetailWindow.hidden == true {
+                if readMailPage.hidden == true {
+                    showInvitePage()
+                }
+            }
         }
             }
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let touch = touches.first
         touchEndedLocation = touch?.locationInNode(self)
-        //bird
-        let location=touches.first?.locationInNode(self)
-        let nodeTouched=nodeAtPoint(location!)
-        let nodeTouchedName=nodeTouched.name
-        //
         let touchLocationForFriendList = touch?.locationInNode(friendCell)
         let touchLocationForFriendDetailList = touch?.locationInNode(friendDetailWindow)
         let touchLocationForMailList = touch?.locationInNode(messageCell)
@@ -355,17 +349,6 @@ class SocialScene: SKScene {
         let touchLocationForConfirmInvite = touch?.locationInNode(inviteCell)
         //點擊退出好友詳細資訊視窗
         if touchBeganLocation == touchEndedLocation {
-            if nodeTouchedName == "friendBattleBtn"{
-                if let scene=ArenaMonsterBattleScene(fileNamed: "ArenaMonsterBattleScene"){
-                    scene.scaleMode = .Fill
-                    scene.userData=NSMutableDictionary()
-                scene.userData?.setObject((friendDeleteBtn.userData?.objectForKey("friendId")!)!, forKey: "id")
-//                    scene.userData?.setObject(userData?.objectForKey("image") as! UIImage, forKey: "image")
-                    scene.userData?.setObject("practice", forKey: "arenaType")
-                    scene.userData?.setObject("firend", forKey: "where")
-                    view?.presentScene(scene)
-                }
-            }
             if friendDetailCancelBtn.containsPoint(touchLocationForFriendDetailList!) {
                 hideFriendDetail()
         //點擊傳送信件給好友
@@ -373,9 +356,13 @@ class SocialScene: SKScene {
                 showSendMailPage(friendDetailMessageBtn)
             }else if sendMailPageCancelBtn.containsPoint(touchLocationForFriendDetailList!){
                 hideSendMailPage()
+            }else if sendMailPageSendBtn.containsPoint(touchLocationForFriendDetailList!){
+                sendingMailToFriend()
         //點擊刪除好友
             }else if friendDeleteBtn.containsPoint(touchLocationForFriendDetailList!){
-                deleteFriend(friendDeleteBtn)
+                if sendMailPage.hidden == true{
+                    deleteFriend(friendDeleteBtn)
+                }
         //點擊好友彈出好友詳細資訊視窗
             }else{
                 if background.containsPoint(touchEndedLocation!){
@@ -383,7 +370,9 @@ class SocialScene: SKScene {
                         if i.name!.hasPrefix("friendCellNew"){
                             if i.containsPoint(touchLocationForFriendList!) {
                                 if self.friendCell.hidden == false {
-                                    showFriendDetail(i)
+                                    if friendDetailWindow.hidden == true {
+                                        showFriendDetail(i)
+                                    }
                                 }
                             }
                         }
@@ -401,7 +390,9 @@ class SocialScene: SKScene {
                         if i.name!.hasPrefix("messageCellNew"){
                             if i.containsPoint(touchLocationForMailList!) {
                                 if self.messageCell.hidden == false {
-                                    showReadMailPage(i)
+                                    if readMailPage.hidden == true {
+                                        showReadMailPage(i)
+                                    }
                                 }
                             }
                         }
@@ -412,27 +403,23 @@ class SocialScene: SKScene {
         //點擊回應交友邀請
         if touchBeganLocation == touchEndedLocation {
             if inviteCell.hidden == false {
-                print(111)
                 if background.containsPoint(touchEndedLocation!) {
-                    print(222)
-//                    if background.containsPoint(touchEndedLocation!){
                         for a in inviteCell.children {
                             if ((a.name?.hasPrefix("inviteCellNew")) != nil) {
                                 for b in a.children {
-                                   print("b:\(b.name)")
-                                    print(333)
-                                    if b.name!.hasPrefix("inviteAcceptBtn0") {
-                                        if b.containsPoint(touchLocationForConfirmInvite!){
-                                            print(b.userData?.objectForKey("friendId"))
+                                    if b.name!.hasPrefix("inviteAcceptBtn") {
+                                        if b.containsPoint((touch?.locationInNode(b))!){
                                             friendInviteConfirmYes(b)
+                                        }
+                                    }else if b.name!.hasPrefix("inviteCancelBtn") {
+                                        if b.containsPoint((touch?.locationInNode(b))!){
+                                            friendInviteConfirmNo(b)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
                 }
-//            }else if inviteCancelBtn.containsPoint(touchLocationForConfirmInvite!) {
-//                friendInviteConfirmNo()
             }
         }
     }
@@ -445,7 +432,7 @@ class SocialScene: SKScene {
         //朋友列表滑動捲軸
         if friendCell.hidden == false{
             let objectMoveRange = 0 - (friendCell.childNodeWithName("friendCellNew\(friendCount-1)")?.position.y)! - 3 * friendCell.frame.height
-            let changePositionValue = objectMoveRange / CGFloat(friendCount) / 2
+            let changePositionValue = objectMoveRange / CGFloat(friendCount-1) / 2
             if background.containsPoint(touchBeganLocation) {
                 if self.friendCell.hidden == false{
                     if range > 0 {
@@ -473,7 +460,9 @@ class SocialScene: SKScene {
                 if self.messageCell.hidden == false{
                     if range > 0 {
                         if messageCell.position.y < 455 + objectMoveRange {
-                            messageCell.position.y += changePositionValue
+                            if messageCount >= 7 {
+                                messageCell.position.y += changePositionValue
+                            }
                         }
                     }
                     if range < 0 {
@@ -494,7 +483,9 @@ class SocialScene: SKScene {
                 if self.inviteCell.hidden == false{
                     if range > 0 {
                         if inviteCell.position.y < 455 + objectMoveRange {
-                            inviteCell.position.y += changePositionValue
+                            if inviteCount >= 7 {
+                                inviteCell.position.y += changePositionValue
+                            }
                         }
                     }
                     if range < 0 {
@@ -511,18 +502,18 @@ class SocialScene: SKScene {
 
     //回到主頁大廳
     func backToMainPage(){
-        //print("Btn Clicked!(For test)")
-//        if let scene = GameScene(fileNamed: "GameScene") {
-//            scene.scaleMode = .Fill
-//            let myTransition = SKTransition.pushWithDirection(SKTransitionDirection.Down, duration: 0.1)
-//            view?.presentScene(scene,transition: myTransition)
-//        }
+        /*
+        if let scene = GameScene(fileNamed: "GameScene") {
+            scene.scaleMode = .Fill
+            let myTransition = SKTransition.pushWithDirection(SKTransitionDirection.Down, duration: 0.1)
+            view?.presentScene(scene,transition: myTransition)
+        }
+        */
         view?.removeFromSuperview()
     }
     
     //切換至好友列表
     func showFriendList() {
-        //print("showFriendList!(For test)")
         friendListPage.zPosition = 3
         messagePage.zPosition = 2
         invitePage.zPosition = 2
@@ -538,7 +529,6 @@ class SocialScene: SKScene {
     
     //切換至訊息頁面
     func showMessagePage() {
-        //print("showMessagePage!(For test)")
         friendListPage.zPosition = 2
         messagePage.zPosition = 3
         invitePage.zPosition = 2
@@ -554,7 +544,6 @@ class SocialScene: SKScene {
     
     //切換至交友邀請頁面
     func showInvitePage() {
-        //print("showInvitePage!(For test)")
         friendListPage.zPosition = 2
         messagePage.zPosition = 2
         invitePage.zPosition = 3
@@ -566,7 +555,6 @@ class SocialScene: SKScene {
         friendCell.position.y = 440
         messageCell.position.y=455
         inviteCell.position.y=455
-        //friendCell.position = CGPoint(x: 160, y: 440)
     }
 
     //彈出好友資訊視窗方法
@@ -592,46 +580,31 @@ class SocialScene: SKScene {
         let id = node.userData?.objectForKey("friendId")?.stringValue
         alamoRequsetUpdate(deleteFriendURL, parameter: ["friendId":id!]) { (inner) -> Void in
         }
-        if let scene = SocialScene(fileNamed: "SocialScene") {
-            scene.scaleMode = .Fill
-            let myTransition = SKTransition.pushWithDirection(SKTransitionDirection.Up, duration: 0.1)
-            view?.presentScene(scene,transition: myTransition)
-        }
+        timer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: Selector("updateTime"), userInfo: nil, repeats: false)
     }
     
     //彈出編寫信件頁方法
     func showSendMailPage(node:SKNode) {
         sendMailPage.hidden = false
         sendMailPage.position = CGPoint(x: 160, y: 265)
-        //mailTextView.center = CGPointMake(200.0, 300.0)
-//        mailTextView.hidden = false
-//        let mailTextView = UITextView(frame: CGRect(x: 0, y: 0, width: 330.0, height: 330.0))
-        //        CGRect(x: 0, y: 0, width: 330.0, height: 330.0)
-//        mailTextView.center = CGPointMake(200.0, 300.0)
-        //        CGPointMake(200.0, 300.0)
-//        mailTextView.backgroundColor = UIColor.whiteColor()
-//        mailTextView.translatesAutoresizingMaskIntoConstraints = false
-//        self.view?.addSubview(mailTextView)
-        //        mailTextView.hidden = true
-        //        self.view!.backgroundColor = UIColor.redColor()
-        //        self.view!.layer.borderWidth = 10;
-        //        self.view!.layer.borderColor =  UIColor.redColor().CGColor
+
+        let screemSize = UIScreen.mainScreen().applicationFrame
+        let screemWidth = screemSize.size.width
+        let screemHeight = screemSize.size.height
         
-//        mailTextView.delegate = self
-        
-//        func yourTextView(textView: UITextView!, shouldChangeTextInRange: NSRange, replacementText: NSString!) -> Bool {
-//            if (replacementText == "\n")  {
-//                mailTextView.resignFirstResponder()
-//                return false
-//            }
-//            return true
-//        }
+        sendMailToLabel.text = "To：" + (friendDetailNameLabel.text)!
+
+        mailTextView = UITextView(frame: CGRect(x: 0, y: 0, width: screemWidth*0.56 , height: screemHeight*0.35))
+        mailTextView.center = CGPointMake(screemWidth/2, screemHeight/2)
+        mailTextView.backgroundColor = UIColor.clearColor()
+        mailTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.view?.addSubview(mailTextView)
     }
     func hideSendMailPage() {
         sendMailPage.hidden = true
         sendMailPage.position = CGPoint(x: 450, y: 265)
 //        mailTextView.hidden = true
-//        mailTextView.center = CGPointMake(-300, 265)
+        mailTextView.removeFromSuperview()
     }
     
     //彈出信件內容方法
@@ -639,41 +612,83 @@ class SocialScene: SKScene {
         readMailPage.hidden = false
         readMailPage.position = CGPoint(x: 160, y: 265)
         readMailPageSendFromLabel.text = "From：" + ((node.userData?.objectForKey("whoSendYou"))! as! String)
-        readMailPageMessageLabel.text = (node.userData?.objectForKey("mailContent"))! as? String
+        //隱藏預設信件內容位置的SKLabelNode
+        for a in readMailPage.children{
+            if a.name!.hasPrefix("readMailPageMessageLabel") {
+                a.hidden = true
+            }
+        }
+        //把取到的信件內容轉成陣列
+        let mailContentText = Array((node.userData?.objectForKey("mailContent") as? String)!.characters)
+        
+        //把字分給預設信件內容的node，每個最多分12個字
+        let totalLines = (mailContentText.count/12)+1
+        var wordCount = 0
+        
+        for i in 0..<totalLines{
+            var linesLength = 0
+            var linesString:String=""
+            while linesLength<11 {
+                if wordCount == mailContentText.count {
+                    break
+                }
+                linesString = linesString+String(mailContentText[wordCount])
+                linesLength = linesString.characters.count
+                wordCount++
+            }
+            let label=readMailPage.childNodeWithName("readMailPageMessageLabel\(i)") as! SKLabelNode
+            label.hidden=false
+            label.text=linesString
+        }
     }
     func hideReadMailPage() {
         readMailPage.hidden = true
         readMailPage.position = CGPoint(x: -135, y: 265)
     }
+    
+    //寄信給朋友
+    func sendingMailToFriend() {
+        let id = (friendDeleteBtn.userData?.objectForKey("friendId"))?.stringValue
+        let mailContent = mailTextView.text
+        alamoRequsetUpdate(sendMailURL, parameter: ["targetUserId":id!,"mailContent":mailContent]) { (inner) -> Void in
+        }
+        hideSendMailPage()
+    }
 
     //回應交友邀請
     func friendInviteConfirmYes(node:SKNode) {
         let id = (node.userData?.objectForKey("friendId"))?.stringValue
-        print(id)
-        print(node.userData?.objectForKey("friendId"))
         alamoRequsetUpdate(confirmInvitedURL, parameter: ["friendId":id!]) { (inner) -> Void in
         }
+        timer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: Selector("updateTime"), userInfo: nil, repeats: false)
+    }
+    func friendInviteConfirmNo(node:SKNode) {
+        let id = (node.userData?.objectForKey("friendId"))?.stringValue
+        alamoRequsetUpdate(confirmInvitedURL, parameter: ["friendId":id!]) { (inner) -> Void in
+        }
+        timer = NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: Selector("updateTime"), userInfo: nil, repeats: false)
+    }
+    
+    //刷新列表資料
+    func updateTime() {
         if let scene = SocialScene(fileNamed: "SocialScene") {
             scene.scaleMode = .Fill
             let myTransition = SKTransition.pushWithDirection(SKTransitionDirection.Up, duration: 0.1)
             view?.presentScene(scene,transition: myTransition)
         }
     }
-    func friendInviteConfirmNo() {
-        
-    }
 
     //第三方存取伺服器資料方法
     func alamoRequset(URL:String,headers:[String:String],completion: (inner: () throws -> [[String:AnyObject]]) -> Void) -> Void {
         Alamofire.request(.POST, URL, headers: headers).responseJSON { (response) -> Void in
             let swiftyJsonVar=JSON(response.result.value!)
-            print(swiftyJsonVar)
             if let jsonResult=swiftyJsonVar["result"].arrayObject{
                 let monsterJSON=jsonResult as! [[String:AnyObject]]
                 completion(inner: {return monsterJSON})
             }
         }
     }
+    
     func alamoRequsetUpdate(URL:String,parameter:[String:AnyObject],completion: (inner: () throws -> [[String:AnyObject]]) -> Void) -> Void {
         Alamofire.request(.POST, URL,parameters: parameter, headers: headers,encoding:.JSON).responseJSON { (response) -> Void in
             switch response.result{
