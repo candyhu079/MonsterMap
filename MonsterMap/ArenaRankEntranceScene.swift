@@ -210,7 +210,6 @@ class ArenaRankEntranceScene: SKScene {
             switch response.result{
             case .Success:
                 if let image=response.result.value{
-                    print("image downloaded: \(image)")
                     completion(inner: {return image})
                 }
             case .Failure(let error):
@@ -242,7 +241,6 @@ class ArenaRankEntranceScene: SKScene {
         addChild(clearBackground)
     }
     func removeClearBackground(){
-        print("removeclearbackground")
         if let b=childNodeWithName("clearBackground"){
             b.removeFromParent()
         }
