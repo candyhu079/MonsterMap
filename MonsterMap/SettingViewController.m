@@ -22,7 +22,8 @@
 
 typedef void (^CompletionBlock)(NSError * error,id result);
 
-#define BASE_URL @"http://api.leolin.me"
+//#define BASE_URL @"http://api.leolin.me"
+#define BASE_URL @"http://192.168.197.112:8080"
 #define CHANGEPASSWORD_URL [BASE_URL stringByAppendingPathComponent:@"changePassword"]
 #define LOGOUT_URL [BASE_URL stringByAppendingPathComponent:@"logout"]
 

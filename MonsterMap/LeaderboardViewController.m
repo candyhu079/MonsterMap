@@ -71,7 +71,7 @@
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     [manager.requestSerializer setValue:player.userToken forHTTPHeaderField:@"token"];
     
-    [manager POST:@"http://api.leolin.me/rank" parameters:nil success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+    [manager POST:@"http://192.168.197.112:8080/rank" parameters:nil success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
         
         NSError * error;
         NSData * data = [NSData dataWithData:responseObject];

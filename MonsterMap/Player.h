@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-#define BASE_URL              @"http://api.leolin.me"
+//#define BASE_URL              @"http://api.leolin.me"
 //#define BASE_URL              @"http://10.0.1.23:8080"
+#define BASE_URL              @"http://192.168.197.112:8080"
 
 #define USERLOGIN_URL         [BASE_URL stringByAppendingPathComponent:@"userLogin"]
 #define CREATEUSER_URL        [BASE_URL stringByAppendingPathComponent:@"createUser"]

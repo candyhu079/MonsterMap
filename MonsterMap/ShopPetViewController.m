@@ -187,7 +187,8 @@
         _productPriceLabel.text = @"";
         _itemScrollview.userInteractionEnabled = NO;
         _decoScrollview.userInteractionEnabled = NO;
-        [_petScrollview becomeFirstResponder];
+        _petScrollview.userInteractionEnabled = YES;
+//        [_petScrollview becomeFirstResponder];
         [_productImage setImage:[UIImage imageNamed:@"questionMark"]];
         
     }else if ([tapGesture view] == _itemTabLabel){
@@ -205,7 +206,8 @@
         _productPriceLabel.text = @"";
         _decoScrollview.userInteractionEnabled = NO;
         _petScrollview.userInteractionEnabled = NO;
-        [_itemScrollview becomeFirstResponder];
+        _itemScrollview.userInteractionEnabled = YES;
+//        [_itemScrollview becomeFirstResponder];
         [_productImage setImage:[UIImage imageNamed:@"questionMark"]];
     }else{
         _petTabLabel.layer.zPosition = 17;
@@ -222,8 +224,9 @@
         _productPriceLabel.text = @"";
         _petScrollview.userInteractionEnabled = NO;
         _itemScrollview.userInteractionEnabled = NO;
-        [_decoScrollview becomeFirstResponder];
-        [_productImage setImage:[UIImage imageNamed:@"questionMark"]]; 
+        _decoScrollview.userInteractionEnabled = YES;
+//        [_decoScrollview becomeFirstResponder];
+        [_productImage setImage:[UIImage imageNamed:@"questionMark"]];
     }
 }
 //特定商品購買btn點擊

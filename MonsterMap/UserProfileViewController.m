@@ -15,7 +15,8 @@
 
 typedef void (^CompletionBlock)(NSError * error,id result);
 
-#define BASE_URL @"http://api.leolin.me"
+//#define BASE_URL @"http://api.leolin.me"
+#define BASE_URL @"http://192.168.197.112:8080"
 #define USERPROFILE_URL [BASE_URL stringByAppendingPathComponent:@"userProfile"]
 #define CHANGEPHOTO_URL [BASE_URL stringByAppendingPathComponent:@"changePhoto"]
 #define PICTUREBASE64 @"pictureBase64"
@@ -226,6 +227,7 @@ typedef void (^CompletionBlock)(NSError * error,id result);
     if (sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
         imagePicker.allowsEditing = true;  //可以裁切圖片
     }else if(sourceType == UIImagePickerControllerSourceTypeCamera){
+        imagePicker.allowsEditing = true;
         imagePicker.showsCameraControls = true;
         imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
         

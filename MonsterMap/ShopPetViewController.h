@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#define BASE_URL             @"http://api.leolin.me"
+//#define BASE_URL             @"http://api.leolin.me"
+#define BASE_URL             @"http://192.168.197.112:8080"
 #define DECORATION_URL       [BASE_URL stringByAppendingPathComponent:@"decoration"]
 #define BUYCOIN_URL       [BASE_URL stringByAppendingPathComponent:@"shopDiamond"]
 

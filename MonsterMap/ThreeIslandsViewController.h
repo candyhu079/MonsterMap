@@ -6,8 +6,9 @@
 //  Copyright © 2016年 MonsterTeam. All rights reserved.
 //
 
-#define BASE_URL              @"http://api.leolin.me"
+//#define BASE_URL              @"http://api.leolin.me"
 //#define BASE_URL              @"http://10.0.1.23:8080"
+#define BASE_URL             @"http://192.168.197.112:8080"
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
