@@ -31,12 +31,16 @@ class BackpackChooseItemUser: SKScene {
 //    var monsterCount:Int!
     var itemBackground:SKSpriteNode!
     var itemQuantity:Int!
+    enum URL:String{
+        case URLBegining="http://api.leolin.me"
+        case UserMonster="http://api.leolin.me/userMonster"
+        case UseItem="http://api.leolin.me/useItem"
+    }
 
 
     override func didMoveToView(view: SKView) {
         managedObjectContext=appDelegate.managedObjectContext
         headers=["token":token]
-        let userMonsterURL="http://api.leolin.me/userMonster"
         monsterName=childNodeWithName("monsterName") as! SKLabelNode
         howManyLeft=childNodeWithName("howManyLeft") as! SKLabelNode
         monsterItem=childNodeWithName("monsterItem") as! SKSpriteNode
@@ -51,7 +55,7 @@ class BackpackChooseItemUser: SKScene {
         monsterName.hidden=true
         monsterItem.hidden=true
 
-        alamoRequset(userMonsterURL) { (inner) -> Void in
+        alamoRequset(URL.UserMonster.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -131,7 +135,7 @@ class BackpackChooseItemUser: SKScene {
                     self.setMonsterInfo(a.name!)
                     theMonsterID=(a.userData?.objectForKey("id")?.integerValue)!
                     setMonsterHP(a)
-                    alamoRequsetUpdate("http://api.leolin.me/useItem", parameter: ["itemName":theItemName,"monsterId":"\(theMonsterID)","monsterName":theMonsterName], completion: { (inner) -> Void in
+                    alamoRequsetUpdate(URL.UseItem.rawValue, parameter: ["itemName":theItemName,"monsterId":"\(theMonsterID)","monsterName":theMonsterName], completion: { (inner) -> Void in
                         
                     })
                 }
@@ -178,7 +182,7 @@ class BackpackChooseItemUser: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String="http://api.leolin.me\(thePicturePath)"
+        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in

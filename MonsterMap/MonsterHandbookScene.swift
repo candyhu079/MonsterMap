@@ -32,9 +32,10 @@ class MonsterHandbookScene: SKScene {
     var managedObjectContext:NSManagedObjectContext!
     var monsterImage:[MonsterImage] = []
     var monsterButtonImage:[MonsterButtonImage] = []
-
-
-    let URL="http://api.leolin.me/monster"
+    enum URL:String{
+        case URLBegining="http://api.leolin.me"
+        case Monster="http://api.leolin.me/monster"
+    }
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
 
@@ -57,7 +58,7 @@ class MonsterHandbookScene: SKScene {
         
         //載入怪獸
 //        (inner: () throws -> [[String:AnyObject]])
-        alamoRequset(URL){ (inner) -> Void in
+        alamoRequset(URL.Monster.rawValue){ (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -117,14 +118,13 @@ class MonsterHandbookScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String="http://api.leolin.me\(thePicturePath)"
+        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
             switch response.result{
             case .Success:
                 if let image=response.result.value{
-                    print("image downloaded: \(image)")
             completion(inner: {return image})
                 }
             case .Failure(let error):
@@ -317,7 +317,6 @@ class MonsterHandbookScene: SKScene {
                                 saveImage.picture=UIImagePNGRepresentation(image)
                                 saveImage.picturePath=thePicturePath
                                 do{
-                                    print("儲存\(theMonsterName)的image")
                                     try moc.save()
                                     self.monsterImage=try moc.executeFetchRequest(monsterImageFetch) as! [MonsterImage]
                                 }catch{
@@ -330,7 +329,6 @@ class MonsterHandbookScene: SKScene {
                                 saveImage.picture=UIImagePNGRepresentation(image)
                                 saveImage.picturePath=thePicturePath
                                 do{
-                                    print("儲存\(theMonsterName)的image")
                                     try moc.save()
                                     self.monsterButtonImage=try moc.executeFetchRequest(monsterImageFetch) as! [MonsterButtonImage]
                                 }catch{

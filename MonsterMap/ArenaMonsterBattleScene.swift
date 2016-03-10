@@ -66,16 +66,19 @@ class ArenaMonsterBattleScene: SKScene {
     var userHaveADeadMonster=false
     var buttonVoicePlayer:AVAudioPlayer!
     var skillVoicePlayer:AVAudioPlayer!
-
-
+    enum URL:String{
+        case MyMonsterForFighting="http://api.leolin.me/myMonsterForFighting"
+        case PracticeWithSomeoneKnow="http://api.leolin.me/practiceWithSomeoneKnow"
+        case ArenaGameOver="http://api.leolin.me/arenaGameOver"
+        case URLBegining="http://api.leolin.me"
+        case UseItem="http://api.leolin.me/useItem"
+    }
 //    let swipeRightRecognizer=UISwipeGestureRecognizer()
 //    let swipeLeftRecognizer=UISwipeGestureRecognizer()
     override func didMoveToView(view: SKView) {
     
         managedObjectContext=appDelegate.managedObjectContext
 
-        let userFightingMonsterURL="http://api.leolin.me/myMonsterForFighting"
-        let enemyFightingMonsterURL="http://api.leolin.me/practiceWithSomeoneKnow"
         headers=["token":token]
         createBlackBackground("選擇出戰寵物")
         userCauseDamgeLabel=childNodeWithName("userCauseDamageLabel") as! SKLabelNode
@@ -94,7 +97,7 @@ class ArenaMonsterBattleScene: SKScene {
         statusEnemyFrameNode=childNodeWithName("statusEnemyFrame") as! SKSpriteNode
         statusUserFrameNode.childNodeWithName("image")?.xScale = -1
         
-        alamoRequset(userFightingMonsterURL){ (inner) -> Void in
+        alamoRequset(URL.MyMonsterForFighting.rawValue){ (inner) -> Void in
             do{
                 let result=try inner()
                 var monsterPositionColumn=0
@@ -150,7 +153,7 @@ class ArenaMonsterBattleScene: SKScene {
                 print(error)
             }
         }
-        alamoRequsetUpdate(enemyFightingMonsterURL,parameter: ["userId":(userData?.objectForKey("id")?.stringValue)!]) { (inner) -> Void in
+        alamoRequsetUpdate(URL.PracticeWithSomeoneKnow.rawValue,parameter: ["userId":(userData?.objectForKey("id")?.stringValue)!]) { (inner) -> Void in
             do{
                 let result=try inner()
                 self.enemyMonsterStatusCount=result.count
@@ -264,7 +267,7 @@ class ArenaMonsterBattleScene: SKScene {
         if touchBeganLocation==location{
         if nodeTouchedName == "battleEscapeButton"{
             if (userData?.objectForKey("arenaType") as! String) == "arena"{
-                alamoRequsetUpdate("http://api.leolin.me/arenaGameOver", parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
+                alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
                 })
             }
 //            reportUserMonsterHP()
@@ -344,7 +347,7 @@ class ArenaMonsterBattleScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String="http://api.leolin.me\(thePicturePath)"
+        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
@@ -1713,7 +1716,7 @@ class ArenaMonsterBattleScene: SKScene {
             createBlackBackground("你被打爆囉！！")
 //            reportUserMonsterHP()
             if (userData?.objectForKey("arenaType") as! String) == "arena"{
-                alamoRequsetUpdate("http://api.leolin.me/arenaGameOver", parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
+                alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
                 })
             }
             let exit=SKSpriteNode(imageNamed: "exitButton")
@@ -1722,69 +1725,6 @@ class ArenaMonsterBattleScene: SKScene {
             exit.position=CGPoint(x: battleEscapeButton.position.x, y: battleEscapeButton.position.y)
             exit.zPosition=20
         }
-    }
-    func reportUserMonsterHP(){
-        var monsterID1ID:Int!
-        var monsterID1Name:String!
-        var monsterID1Hp:Int!
-        var monsterID2ID:Int!
-        var monsterID2Name:String!
-        var monsterID2Hp:Int!
-        var monsterID3ID:Int!
-        var monsterID3Name:String!
-        var monsterID3Hp:Int!
-        var parameter:[String:[NSDictionary]]!
-        switch monsterCount{
-        case 1:
-            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-            monsterID1Hp=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID1Hp <= 0{
-                monsterID1Hp=1
-            }
-            parameter=["monsterBloods":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"monsterBlood":monsterID1Hp]]]
-            break
-        case 2:
-            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-            monsterID1Hp=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID1Hp <= 0{
-                monsterID1Hp=1
-            }
-            monsterID2ID=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID2Name=monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("name") as! String
-            monsterID2Hp=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID2Hp <= 0{
-                monsterID2Hp=1
-            }
-            parameter=["monsterBloods":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"monsterBlood":monsterID1Hp],["monsterId":monsterID2ID,"monsterName":monsterID2Name,"monsterBlood":monsterID2Hp]]]
-            break
-        case 3:
-            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-            monsterID1Hp=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID1Hp <= 0{
-                monsterID1Hp=1
-            }
-            monsterID2ID=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID2Name=monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("name") as! String
-            monsterID2Hp=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID2Hp <= 0{
-                monsterID2Hp=1
-            }
-            monsterID3ID=(monsterItemNode.childNodeWithName("monsterID3")?.userData?.objectForKey("id")?.integerValue)!
-            monsterID3Name=monsterItemNode.childNodeWithName("monsterID3")?.userData?.objectForKey("name") as! String
-            monsterID3Hp=(monsterItemNode.childNodeWithName("monsterID3")?.userData?.objectForKey("monsterBlood")?.integerValue)!
-            if monsterID3Hp <= 0{
-                monsterID3Hp=1
-            }
-            parameter=["monsterBloods":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"monsterBlood":monsterID1Hp],["monsterId":monsterID2ID,"monsterName":monsterID2Name,"monsterBlood":monsterID2Hp],["monsterId":monsterID3ID,"monsterName":monsterID3Name,"monsterBlood":monsterID3Hp]]]
-            break
-        default:
-            break
-        }
-        alamoRequsetUpdate("http://api.leolin.me/settingUserMonsterBlood", parameter: parameter, completion: { (inner) -> Void in
-        })
     }
     func whenUserWin(){
         enemyMonsterStatusCount--
@@ -1804,46 +1744,9 @@ class ArenaMonsterBattleScene: SKScene {
             setEnemyMonsterInfo(statusEnemyFrameNode.childNodeWithName("enemyMonsterID\(enemyTotalMonsterCount-(enemyMonsterStatusCount-1))")!, parentNode: statusEnemyFrameNode)
         }else{
         createBlackBackground("贏咧！！贏咧！！贏咧！！贏咧！！贏咧！！贏咧！！")
-//        NSNotificationCenter.defaultCenter().postNotificationName("deleteAnnotation", object: userData?.objectForKey("annotation"))
-//        var monsterID1ID:Int!
-//        var monsterID1Name:String!
-//        var monsterID2ID:Int!
-//        var monsterID2Name:String!
-//        var monsterID3ID:Int!
-//        var monsterID3Name:String!
-//        var parameter:[String:[NSDictionary]]!
-//        switch monsterCount{
-//        case 1:
-//            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-//            parameter=["monstersArray":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"experience":"1"]]]
-//            break
-//        case 2:
-//            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-//            monsterID2ID=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID2Name=monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("name") as! String
-//            parameter=["monstersArray":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"experience":"1"],["monsterId":monsterID2ID,"monsterName":monsterID2Name,"experience":"1"]]]
-//            break
-//        case 3:
-//            monsterID1ID=(monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID1Name=monsterItemNode.childNodeWithName("monsterID1")?.userData?.objectForKey("name") as! String
-//            monsterID2ID=(monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID2Name=monsterItemNode.childNodeWithName("monsterID2")?.userData?.objectForKey("name") as! String
-//            monsterID3ID=(monsterItemNode.childNodeWithName("monsterID3")?.userData?.objectForKey("id")?.integerValue)!
-//            monsterID3Name=monsterItemNode.childNodeWithName("monsterID3")?.userData?.objectForKey("name") as! String
-//            parameter=["monstersArray":[["monsterId":monsterID1ID,"monsterName":monsterID1Name,"experience":"1"],["monsterId":monsterID2ID,"monsterName":monsterID2Name,"experience":"1"],["monsterId":monsterID3ID,"monsterName":monsterID3Name,"experience":"1"]]]
-//            break
-//        default:
-//            break
-//        }
-//        alamoRequsetUpdate("http://api.leolin.me/monsterAddExperience", parameter: parameter, completion: { (inner) -> Void in
-//        })
-//        alamoRequsetUpdate("http://api.leolin.me/defeatMonster", parameter: ["monster":(statusEnemyFrameNode.childNodeWithName("name") as! SKLabelNode).text!]) { (inner) -> Void in
-//        }
-//        reportUserMonsterHP()
+
         if (userData?.objectForKey("arenaType") as! String) == "arena"{
-            alamoRequsetUpdate("http://api.leolin.me/arenaGameOver", parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"1"], completion: { (inner) -> Void in
+            alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"1"], completion: { (inner) -> Void in
             })
         }
         let exit=SKSpriteNode(imageNamed: "exitButton")
@@ -1852,19 +1755,6 @@ class ArenaMonsterBattleScene: SKScene {
         exit.position=CGPoint(x: battleEscapeButton.position.x, y: battleEscapeButton.position.y)
         exit.zPosition=20
         }
-    }
-    func whenUserCaughtMonster(){
-        createBlackBackground("抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！")
-        NSNotificationCenter.defaultCenter().postNotificationName("deleteAnnotation", object: userData?.objectForKey("annotation"))
-        let monsterName:String=(statusEnemyFrameNode.childNodeWithName("name") as! SKLabelNode).text!
-        alamoRequsetUpdate("http://api.leolin.me/catchMonster", parameter: ["monster":monsterName]) { (inner) -> Void in
-        }
-        reportUserMonsterHP()
-        let exit=SKSpriteNode(imageNamed: "exitButton")
-        exit.name="winExitButton"
-        addChild(exit)
-        exit.position=CGPoint(x: battleEscapeButton.position.x, y: battleEscapeButton.position.y)
-        exit.zPosition=20
     }
     func userTouchedChangeMonsterFrame(locationInMonsterItemNode:CGPoint){
         for a:SKNode in monsterItemNode.children{
@@ -1925,83 +1815,6 @@ class ArenaMonsterBattleScene: SKScene {
                     }
                     break
                 }
-            }
-        }
-    }
-    func userTouchedItemFrame(locationInItemBackgroundNode:CGPoint){
-        for a in itemItemNode.children{
-            if a.containsPoint(locationInItemBackgroundNode){
-                userMonsterBePause=1
-                //判斷使用物品
-                if a.userData?.objectForKey("itemName") as! String == "USB"{
-                    let theItemQuantity:Int=(a.userData?.objectForKey("quantity")?.integerValue)!
-                    //物品數量大於零
-                    if theItemQuantity > 0{
-                        setQuantity("http://api.leolin.me/useItem",theNode: a, quantity: theItemQuantity)
-                        //選動畫圖
-                        for b in self.itemImage{
-                            if b.name == "USB"{
-                                userEmitter(b.picture!)
-                                break
-                            }
-                        }
-                    let catchFailNumber:Int=Int(arc4random_uniform(10))
-                        let enemyMonsterLevel:Int=(statusEnemyFrameNode.childNodeWithName(enemyFightMonsterNodeName)?.userData?.objectForKey("level")?.integerValue)!
-                        let enemyMonsterHPBase:Int=(statusEnemyFrameNode.childNodeWithName(enemyFightMonsterNodeName)?.userData?.objectForKey("hp")?.integerValue)!
-                        let enemyMonsterHPUp:Int=(statusEnemyFrameNode.childNodeWithName(enemyFightMonsterNodeName)?.userData?.objectForKey("hpLevelUp")?.integerValue)!
-                        let enemyMonsterHP:Double=Double(enemyMonsterLevel * enemyMonsterHPUp + enemyMonsterHPBase - enemyTakeDamage)
-                        let enemyMonsterMaxHP:Double=Double(enemyMonsterLevel * enemyMonsterHPUp + enemyMonsterHPBase)
-                        if enemyMonsterHP > enemyMonsterMaxHP / 5.0 || enemyMonsterHP    > 20 {
-                    if catchFailNumber == 0{
-                        runAction(SKAction.sequence([SKAction.waitForDuration(1),SKAction.runBlock({ () -> Void in
-                            self.whenUserCaughtMonster()
-                        })]))
-                    }else{
-                        showSomeWordForOneSec("失敗囉失敗囉失敗囉失敗囉失敗囉")
-                        runAction(SKAction.sequence([SKAction.waitForDuration(1),SKAction.runBlock({ () -> Void in
-                            self.childNodeWithName("userEmitter")?.removeFromParent()
-                            self.decideEnemySkillAndGoFight(1)
-                        })]))
-                    }
-                        }else{
-                            if catchFailNumber == 0 || catchFailNumber == 1 || catchFailNumber == 2 || catchFailNumber == 3 {
-                                showSomeWordForOneSec("失敗囉失敗囉失敗囉失敗囉失敗囉")
-                                runAction(SKAction.sequence([SKAction.waitForDuration(1),SKAction.runBlock({ () -> Void in
-                                    self.childNodeWithName("userEmitter")?.removeFromParent()
-                                    self.decideEnemySkillAndGoFight(1)
-                                })]))
-                            }else{
-                                runAction(SKAction.sequence([SKAction.waitForDuration(1),SKAction.runBlock({ () -> Void in
-                                    self.whenUserCaughtMonster()
-                                })]))
-                            }
-                        }
-                    }else{
-                        showSomeWordForOneSec("沒了啦啦啦")
-                    }
-                }else if a.userData?.objectForKey("itemName") as! String == "USB PRO"{
-                    print("use usb pro")
-                    let theItemQuantity:Int=(a.userData?.objectForKey("quantity")?.integerValue)!
-                    if theItemQuantity > 0{
-                        setQuantity("http://api.leolin.me/useItem",theNode: a, quantity: theItemQuantity)
-                        for b in self.itemImage{
-                            if b.name == "USB PRO"{
-                                let wait1=SKAction.waitForDuration(1)
-                                let runWhenUserCaughtMonster=SKAction.runBlock({ () -> Void in
-                                    self.whenUserCaughtMonster()
-                                })
-                                runAction(SKAction.sequence([SKAction.runBlock({ () -> Void in
-                                    self.userEmitter(b.picture!)
-                                }),wait1,runWhenUserCaughtMonster]))
-                                
-                                break
-                            }
-                        }
-                    }else{
-                        showSomeWordForOneSec("沒了啦啦啦")
-                    }
-                }
-                itemNodeBackground.hidden=true
             }
         }
     }

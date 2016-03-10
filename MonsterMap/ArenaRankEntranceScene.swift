@@ -17,6 +17,10 @@ class ArenaRankEntranceScene: SKScene {
     let token = Player.playerSingleton().userToken
     var otherUserInfo:[[String:AnyObject]]=[]
     var arenaType:String=""
+    enum URL:String{
+        case URLBegining="http://api.leolin.me"
+        case UserProfile="http://api.leolin.me/userProfile"
+    }
     override func didMoveToView(view: SKView) {
         headers=["token":token]
         if ((userData?.objectForKey("URL"))! as! String).hasSuffix("a"){
@@ -90,7 +94,7 @@ class ArenaRankEntranceScene: SKScene {
                 print(error)
             }
         }
-        alamoRequsetForUser("http://api.leolin.me/userProfile") { (inner) -> Void in
+        alamoRequsetForUser(URL.UserProfile.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 (self.childNodeWithName("userName") as! SKLabelNode).text=result["nickname"] as? String
@@ -203,7 +207,7 @@ class ArenaRankEntranceScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String="http://api.leolin.me\(thePicturePath)"
+        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
