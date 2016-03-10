@@ -32,10 +32,6 @@ class MonsterHandbookScene: SKScene {
     var managedObjectContext:NSManagedObjectContext!
     var monsterImage:[MonsterImage] = []
     var monsterButtonImage:[MonsterButtonImage] = []
-    enum URL:String{
-        case URLBegining="http://api.leolin.me"
-        case Monster="http://api.leolin.me/monster"
-    }
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
 
@@ -58,7 +54,7 @@ class MonsterHandbookScene: SKScene {
         
         //載入怪獸
 //        (inner: () throws -> [[String:AnyObject]])
-        alamoRequset(URL.Monster.rawValue){ (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.Monster.rawValue){ (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -118,7 +114,7 @@ class MonsterHandbookScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
+        let picturePath:String=BirdGameSetting.URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in

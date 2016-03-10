@@ -15,9 +15,6 @@ class OtherUserCalloutInfoScene: SKScene {
     let userPhoneHeight=UIScreen.mainScreen().bounds.height
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
-    enum URL:String{
-        case AddFriend="http://api.leolin.me/addFriend"
-    }
     override func didMoveToView(view: SKView) {
         backgroundColor=UIColor.clearColor()
         headers=["token":token]
@@ -63,7 +60,7 @@ class OtherUserCalloutInfoScene: SKScene {
         }else if nodeTouchedName == "monsterCalloutInfoCancel"{
             view?.removeFromSuperview()
         }else if nodeTouchedName == "addFriendButton"{
-            alamoRequsetUpdate(URL.AddFriend.rawValue, parameter: ["friendId":(userData?.objectForKey("id")?.stringValue)!], completion: { (inner) -> Void in
+            alamoRequsetUpdate(BirdGameSetting.URL.AddFriend.rawValue, parameter: ["friendId":(userData?.objectForKey("id")?.stringValue)!], completion: { (inner) -> Void in
             })
         }else if nodeTouchedName == "contactButton"{
             

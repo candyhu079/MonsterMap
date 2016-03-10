@@ -67,16 +67,6 @@ class MapMonsterBattleScene: SKScene {
     var skillVoicePlayer:AVAudioPlayer!
 //    let swipeRightRecognizer=UISwipeGestureRecognizer()
 //    let swipeLeftRecognizer=UISwipeGestureRecognizer()
-    enum URL:String{
-        case MyMonsterForFighting="http://api.leolin.me/myMonsterForFighting"
-        case Monster="http://api.leolin.me/monster"
-        case URLBegining="http://api.leolin.me"
-        case SettingUserMonsterBlood="http://api.leolin.me/settingUserMonsterBlood"
-        case MonsterAddExperience="http://api.leolin.me/monsterAddExperience"
-        case DefeatMonster="http://api.leolin.me/defeatMonster"
-        case CatchMonster="http://api.leolin.me/catchMonster"
-        case UseItem="http://api.leolin.me/useItem"
-    }
     override func didMoveToView(view: SKView) {
         managedObjectContext=appDelegate.managedObjectContext
         headers=["token":token]
@@ -97,7 +87,7 @@ class MapMonsterBattleScene: SKScene {
         statusEnemyFrameNode=childNodeWithName("statusEnemyFrame") as! SKSpriteNode
         statusUserFrameNode.childNodeWithName("image")?.xScale = -1
         
-        alamoRequset(URL.MyMonsterForFighting.rawValue){ (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.MyMonsterForFighting.rawValue){ (inner) -> Void in
             do{
                 let result=try inner()
                 var monsterPositionColumn=0
@@ -153,7 +143,7 @@ class MapMonsterBattleScene: SKScene {
                 print(error)
             }
         }
-        alamoRequset2(URL.Monster.rawValue) { (inner) -> Void in
+        alamoRequset2(BirdGameSetting.URL.Monster.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 for i in 0..<result.count{
@@ -346,7 +336,7 @@ class MapMonsterBattleScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
+        let picturePath:String=BirdGameSetting.URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
@@ -1760,7 +1750,7 @@ class MapMonsterBattleScene: SKScene {
             break
         }
 //        print(parameter)
-        alamoRequsetUpdate(URL.SettingUserMonsterBlood.rawValue, parameter: parameter, completion: { (inner) -> Void in
+        alamoRequsetUpdate(BirdGameSetting.URL.SettingUserMonsterBlood.rawValue, parameter: parameter, completion: { (inner) -> Void in
         })
     }
     func whenUserWin(){
@@ -1798,9 +1788,9 @@ class MapMonsterBattleScene: SKScene {
         default:
             break
         }
-        alamoRequsetUpdate(URL.MonsterAddExperience.rawValue, parameter: parameter, completion: { (inner) -> Void in
+        alamoRequsetUpdate(BirdGameSetting.URL.MonsterAddExperience.rawValue, parameter: parameter, completion: { (inner) -> Void in
         })
-        alamoRequsetUpdate(URL.DefeatMonster.rawValue, parameter: ["monster":(statusEnemyFrameNode.childNodeWithName("name") as! SKLabelNode).text!]) { (inner) -> Void in
+        alamoRequsetUpdate(BirdGameSetting.URL.DefeatMonster.rawValue, parameter: ["monster":(statusEnemyFrameNode.childNodeWithName("name") as! SKLabelNode).text!]) { (inner) -> Void in
         }
         reportUserMonsterHP()
         let exit=SKSpriteNode(imageNamed: "exitButton")
@@ -1813,7 +1803,7 @@ class MapMonsterBattleScene: SKScene {
         createBlackBackground("抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！抓到了！！")
         NSNotificationCenter.defaultCenter().postNotificationName("deleteAnnotation", object: userData?.objectForKey("annotation"))
         let monsterName:String=(statusEnemyFrameNode.childNodeWithName("name") as! SKLabelNode).text!
-        alamoRequsetUpdate(URL.CatchMonster.rawValue, parameter: ["monster":monsterName]) { (inner) -> Void in
+        alamoRequsetUpdate(BirdGameSetting.URL.CatchMonster.rawValue, parameter: ["monster":monsterName]) { (inner) -> Void in
         }
         reportUserMonsterHP()
         let exit=SKSpriteNode(imageNamed: "exitButton")
@@ -1893,7 +1883,7 @@ class MapMonsterBattleScene: SKScene {
                     let theItemQuantity:Int=(a.userData?.objectForKey("quantity")?.integerValue)!
                     //物品數量大於零
                     if theItemQuantity > 0{
-                        setQuantity(URL.UseItem.rawValue,theNode: a, quantity: theItemQuantity)
+                        setQuantity(BirdGameSetting.URL.UseItem.rawValue,theNode: a, quantity: theItemQuantity)
                         //選動畫圖
                         for b in self.itemImage{
                             if b.name == "USB"{
@@ -1957,7 +1947,7 @@ class MapMonsterBattleScene: SKScene {
 //                    print("use usb pro")
                     let theItemQuantity:Int=(a.userData?.objectForKey("quantity")?.integerValue)!
                     if theItemQuantity > 0{
-                        setQuantity(URL.UseItem.rawValue,theNode: a, quantity: theItemQuantity)
+                        setQuantity(BirdGameSetting.URL.UseItem.rawValue,theNode: a, quantity: theItemQuantity)
                         for b in self.itemImage{
                             if b.name == "USB PRO"{
                                 let wait1=SKAction.waitForDuration(1)

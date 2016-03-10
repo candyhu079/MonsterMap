@@ -68,16 +68,6 @@ class BackpackScene: SKScene {
     var itemFirstShow=true
     var decorationFirstShow=true
     let token = Player.playerSingleton().userToken
-    enum URL:String{
-        case URLBegining="http://api.leolin.me"
-        case UserMonster="http://api.leolin.me/userMonster"
-        case InventoryItem="http://api.leolin.me/inventoryItem"
-        case InventoryDecorationForBackpack="http://api.leolin.me/inventoryDecorationForBackpack"
-        case SellItem="http://api.leolin.me/sellItem"
-        case SellDecoration="http://api.leolin.me/sellDecoration"
-        case SellMonster="http://api.leolin.me/sellMonster"
-        case SettingUserMonster="http://api.leolin.me/settingUserMonster"
-    }
     weak var backPackDelegate:BackpackSceneDelegate?
     
     override func didMoveToView(view: SKView) {
@@ -123,7 +113,7 @@ class BackpackScene: SKScene {
         monsterName.hidden=true
         monsterItem.hidden=true
         
-        alamoRequset(URL.UserMonster.rawValue) { (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.UserMonster.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -169,7 +159,7 @@ class BackpackScene: SKScene {
                 print(error)
             }
         }
-        alamoRequset(URL.InventoryItem.rawValue) { (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.InventoryItem.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -218,7 +208,7 @@ class BackpackScene: SKScene {
                 print(error)
             }
         }
-        alamoRequset(URL.InventoryDecorationForBackpack.rawValue) { (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.InventoryDecorationForBackpack.rawValue) { (inner) -> Void in
             do{
                 let result=try inner()
                 var positionRow=0
@@ -387,7 +377,7 @@ class BackpackScene: SKScene {
                         if theItemQuantity > 0{
                             showSomeWordForOneSec("賣出\(itemName.text!)")
                             Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                        setQuantity(URL.SellItem.rawValue,theNode: a, quantity: theItemQuantity)
+                        setQuantity(BirdGameSetting.URL.SellItem.rawValue,theNode: a, quantity: theItemQuantity)
                         }
                         break
                     }
@@ -400,7 +390,7 @@ class BackpackScene: SKScene {
                         if theItemQuantity > 0{
                             showSomeWordForOneSec("賣出\(decorationName.text!)")
                             Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                        setQuantity(URL.SellDecoration.rawValue,theNode: a, quantity: theItemQuantity)
+                        setQuantity(BirdGameSetting.URL.SellDecoration.rawValue,theNode: a, quantity: theItemQuantity)
                         }
                         break
                     }
@@ -413,7 +403,7 @@ class BackpackScene: SKScene {
                     if a.userData?.objectForKey("id")?.integerValue == monsterID{
                         let theMonsterName:String=a.userData?.objectForKey("name") as! String
                         Player.playerSingleton().coin=Int(Player.playerSingleton().coin)+(a.userData?.objectForKey("sellPrice")?.integerValue)!
-                        alamoRequsetUpdate(URL.SellMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":monsterID], completion: { (inner) -> Void in
+                        alamoRequsetUpdate(BirdGameSetting.URL.SellMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":monsterID], completion: { (inner) -> Void in
                         })
                         print(a.name!.hasSuffix("\(oldMonsterCount)"))
                         print("\(oldMonsterCount)")
@@ -511,7 +501,7 @@ class BackpackScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
+        let picturePath:String=BirdGameSetting.URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
@@ -976,7 +966,7 @@ class BackpackScene: SKScene {
                         monsterFightSet.userData?.setObject(0, forKey: "status")
                         a.childNodeWithName("fightOn")?.removeFromParent()
                         a.userData?.setObject(status, forKey: "status")
-                        alamoRequsetUpdate(URL.SettingUserMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":theMonsterID], completion: { (inner) -> Void in
+                        alamoRequsetUpdate(BirdGameSetting.URL.SettingUserMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":theMonsterID], completion: { (inner) -> Void in
                             
                         })
                     }
@@ -990,7 +980,7 @@ class BackpackScene: SKScene {
                         fightOn.name="fightOn"
                         a.addChild(fightOn)
                         a.userData?.setObject(status, forKey: "status")
-                        alamoRequsetUpdate(URL.SettingUserMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":theMonsterID], completion: { (inner) -> Void in
+                        alamoRequsetUpdate(BirdGameSetting.URL.SettingUserMonster.rawValue, parameter: ["monsterName":theMonsterName,"monsterId":theMonsterID], completion: { (inner) -> Void in
                             
                         })
                     }

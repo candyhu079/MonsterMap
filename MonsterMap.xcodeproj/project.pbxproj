@@ -50,6 +50,7 @@
 		AECC55AA1C8BCCF200733EEF /* BGM_map.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AECC55A91C8BCCF200733EEF /* BGM_map.mp3 */; };
 		AECC55AC1C8BCCFB00733EEF /* BGM_battle.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AECC55AB1C8BCCFB00733EEF /* BGM_battle.mp3 */; };
 		AECC55AE1C8C668F00733EEF /* MakeSomeNoise.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC55AD1C8C668F00733EEF /* MakeSomeNoise.swift */; };
+		AEE3C6E11C91265C00DB957B /* BirdGameSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE3C6E01C91265C00DB957B /* BirdGameSetting.swift */; };
 		AEFC949C1C884AED00D863C4 /* ArenaEntranceScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AEFC94851C884AED00D863C4 /* ArenaEntranceScene.sks */; };
 		AEFC949D1C884AED00D863C4 /* ArenaEntranceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFC94861C884AED00D863C4 /* ArenaEntranceScene.swift */; };
 		AEFC949E1C884AED00D863C4 /* ArenaMonsterBattleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AEFC94871C884AED00D863C4 /* ArenaMonsterBattleScene.sks */; };
@@ -166,6 +167,7 @@
 		AECC55A91C8BCCF200733EEF /* BGM_map.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGM_map.mp3; sourceTree = "<group>"; };
 		AECC55AB1C8BCCFB00733EEF /* BGM_battle.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BGM_battle.mp3; sourceTree = "<group>"; };
 		AECC55AD1C8C668F00733EEF /* MakeSomeNoise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MakeSomeNoise.swift; sourceTree = "<group>"; };
+		AEE3C6E01C91265C00DB957B /* BirdGameSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BirdGameSetting.swift; sourceTree = "<group>"; };
 		AEFC94841C884AEC00D863C4 /* MonsterMap-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonsterMap-Bridging-Header.h"; sourceTree = "<group>"; };
 		AEFC94851C884AED00D863C4 /* ArenaEntranceScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ArenaEntranceScene.sks; sourceTree = "<group>"; };
 		AEFC94861C884AED00D863C4 /* ArenaEntranceScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArenaEntranceScene.swift; sourceTree = "<group>"; };
@@ -417,6 +419,7 @@
 			children = (
 				AEFC94B31C884C4300D863C4 /* BirdMain.storyboard */,
 				AECC55AD1C8C668F00733EEF /* MakeSomeNoise.swift */,
+				AEE3C6E01C91265C00DB957B /* BirdGameSetting.swift */,
 				AEFC94851C884AED00D863C4 /* ArenaEntranceScene.sks */,
 				AEFC94861C884AED00D863C4 /* ArenaEntranceScene.swift */,
 				AEFC94871C884AED00D863C4 /* ArenaMonsterBattleScene.sks */,
@@ -687,6 +690,7 @@
 				36C209BB1C8379D8004B5085 /* SoundEffect.m in Sources */,
 				AEFC949D1C884AED00D863C4 /* ArenaEntranceScene.swift in Sources */,
 				AEFC95051C88513B00D863C4 /* MonsterSkill3Image.swift in Sources */,
+				AEE3C6E11C91265C00DB957B /* BirdGameSetting.swift in Sources */,
 				01AECA801C489C960037B5A5 /* main.m in Sources */,
 				01B165471C643A3A003C302E /* ShopPetViewController.m in Sources */,
 				AEFC950D1C88513B00D863C4 /* MonsterLocation.swift in Sources */,

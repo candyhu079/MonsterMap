@@ -44,11 +44,6 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
     var userDefault = NSUserDefaults.standardUserDefaults()
 //    var i=0
     var toSetAnnotationImage:[String:UIImage]=["a":UIImage(named: "otherUserAnnotation")!]
-    enum URL:String{
-        case UpdateLocation="http://api.leolin.me/updateLocation"
-        case AnotherUserNearToYou="http://api.leolin.me/anotherUserNearToYou"
-        case URLBegining="http://api.leolin.me"
-    }
 
     @IBAction func mapBackButtonPressed(sender: AnyObject) {
 //        if let scene=MonsterHandbookScene(fileNamed: "MonsterHandbookScene"){
@@ -254,7 +249,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
                 firstAskMonster=false
                 let userLocationParameter=["latitude":"\(userLocation.coordinate.latitude)","longitude":"\(userLocation.coordinate.longitude)"]
 //                print(userLocationParameter)
-                askForMonsterLocationFromServer(URL.UpdateLocation.rawValue, parameter: userLocationParameter)
+                askForMonsterLocationFromServer(BirdGameSetting.URL.UpdateLocation.rawValue, parameter: userLocationParameter)
             }else{
                 if firstAskMonster{
                     firstAskMonster=false
@@ -269,7 +264,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
             userDefault.setDouble(userLocation.coordinate.latitude, forKey: "userLatitude")
             userDefault.setDouble(userLocation.coordinate.longitude, forKey: "userLongitude")
             let userLocationParameter=["latitude":"\(userLocation.coordinate.latitude)","longitude":"\(userLocation.coordinate.longitude)"]
-            askForMonsterLocationFromServer(URL.UpdateLocation.rawValue, parameter: userLocationParameter)
+            askForMonsterLocationFromServer(BirdGameSetting.URL.UpdateLocation.rawValue, parameter: userLocationParameter)
             
         }
         //拿地圖人
@@ -283,7 +278,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
             }
             let userLocationParameter=["latitude":"\(userLocation.coordinate.latitude)","longitude":"\(userLocation.coordinate.longitude)"]
             lastGotOtherUser=userLocation
-            askForOtherUserLocationFromServer(URL.AnotherUserNearToYou.rawValue, parameter: userLocationParameter)
+            askForOtherUserLocationFromServer(BirdGameSetting.URL.AnotherUserNearToYou.rawValue, parameter: userLocationParameter)
 
         }else if userLocation.distanceFromLocation(lastGotOtherUser)>100{
             //上網拿資料
@@ -294,7 +289,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
             }
             let userLocationParameter=["latitude":"\(userLocation.coordinate.latitude)","longitude":"\(userLocation.coordinate.longitude)"]
             lastGotOtherUser=userLocation
-            askForOtherUserLocationFromServer(URL.AnotherUserNearToYou.rawValue, parameter: userLocationParameter)
+            askForOtherUserLocationFromServer(BirdGameSetting.URL.AnotherUserNearToYou.rawValue, parameter: userLocationParameter)
         }
         }
     }
@@ -326,7 +321,7 @@ class GameViewController: UIViewController,CLLocationManagerDelegate,MKMapViewDe
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
+        let picturePath:String=BirdGameSetting.URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in

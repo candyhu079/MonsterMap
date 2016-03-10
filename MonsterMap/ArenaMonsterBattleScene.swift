@@ -66,15 +66,6 @@ class ArenaMonsterBattleScene: SKScene {
     var userHaveADeadMonster=false
     var buttonVoicePlayer:AVAudioPlayer!
     var skillVoicePlayer:AVAudioPlayer!
-    enum URL:String{
-        case MyMonsterForFighting="http://api.leolin.me/myMonsterForFighting"
-        case PracticeWithSomeoneKnow="http://api.leolin.me/practiceWithSomeoneKnow"
-        case ArenaGameOver="http://api.leolin.me/arenaGameOver"
-        case URLBegining="http://api.leolin.me"
-        case UseItem="http://api.leolin.me/useItem"
-    }
-//    let swipeRightRecognizer=UISwipeGestureRecognizer()
-//    let swipeLeftRecognizer=UISwipeGestureRecognizer()
     override func didMoveToView(view: SKView) {
     
         managedObjectContext=appDelegate.managedObjectContext
@@ -97,7 +88,7 @@ class ArenaMonsterBattleScene: SKScene {
         statusEnemyFrameNode=childNodeWithName("statusEnemyFrame") as! SKSpriteNode
         statusUserFrameNode.childNodeWithName("image")?.xScale = -1
         
-        alamoRequset(URL.MyMonsterForFighting.rawValue){ (inner) -> Void in
+        alamoRequset(BirdGameSetting.URL.MyMonsterForFighting.rawValue){ (inner) -> Void in
             do{
                 let result=try inner()
                 var monsterPositionColumn=0
@@ -153,7 +144,7 @@ class ArenaMonsterBattleScene: SKScene {
                 print(error)
             }
         }
-        alamoRequsetUpdate(URL.PracticeWithSomeoneKnow.rawValue,parameter: ["userId":(userData?.objectForKey("id")?.stringValue)!]) { (inner) -> Void in
+        alamoRequsetUpdate(BirdGameSetting.URL.PracticeWithSomeoneKnow.rawValue,parameter: ["userId":(userData?.objectForKey("id")?.stringValue)!]) { (inner) -> Void in
             do{
                 let result=try inner()
                 self.enemyMonsterStatusCount=result.count
@@ -267,7 +258,7 @@ class ArenaMonsterBattleScene: SKScene {
         if touchBeganLocation==location{
         if nodeTouchedName == "battleEscapeButton"{
             if (userData?.objectForKey("arenaType") as! String) == "arena"{
-                alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
+                alamoRequsetUpdate(BirdGameSetting.URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
                 })
             }
 //            reportUserMonsterHP()
@@ -347,7 +338,7 @@ class ArenaMonsterBattleScene: SKScene {
         }
     }
     func alamoImageRequset(thePicturePath:String,completion: (inner: () throws -> UIImage) -> Void) -> Void {
-        let picturePath:String=URL.URLBegining.rawValue+thePicturePath
+        let picturePath:String=BirdGameSetting.URL.URLBegining.rawValue+thePicturePath
         let picturePathEncoded=picturePath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         //        Request.addAcceptableImageContentTypes(["image/png"])
         Alamofire.request(.GET, picturePathEncoded, headers: headers).responseImage { (response) -> Void in
@@ -1716,7 +1707,7 @@ class ArenaMonsterBattleScene: SKScene {
             createBlackBackground("你被打爆囉！！")
 //            reportUserMonsterHP()
             if (userData?.objectForKey("arenaType") as! String) == "arena"{
-                alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
+                alamoRequsetUpdate(BirdGameSetting.URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"0"], completion: { (inner) -> Void in
                 })
             }
             let exit=SKSpriteNode(imageNamed: "exitButton")
@@ -1746,7 +1737,7 @@ class ArenaMonsterBattleScene: SKScene {
         createBlackBackground("贏咧！！贏咧！！贏咧！！贏咧！！贏咧！！贏咧！！")
 
         if (userData?.objectForKey("arenaType") as! String) == "arena"{
-            alamoRequsetUpdate(URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"1"], completion: { (inner) -> Void in
+            alamoRequsetUpdate(BirdGameSetting.URL.ArenaGameOver.rawValue, parameter: ["opponentId":(userData?.objectForKey("id")?.stringValue)!,"winOrNot":"1"], completion: { (inner) -> Void in
             })
         }
         let exit=SKSpriteNode(imageNamed: "exitButton")

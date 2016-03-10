@@ -10,10 +10,6 @@ import Foundation
 import SpriteKit
 
 class ArenaEntranceScene: SKScene {
-    enum URL:String{
-        case Arena="http://api.leolin.me/arena"
-        case Practice="http://api.leolin.me/practice"
-    }
     override func didMoveToView(view: SKView) {
     }
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -45,7 +41,7 @@ class ArenaEntranceScene: SKScene {
             if let scene=ArenaRankEntranceScene(fileNamed: "ArenaRankEntranceScene"){
                 scene.scaleMode = .Fill
                 scene.userData=NSMutableDictionary()
-                scene.userData?.setObject(URL.Arena.rawValue, forKey: "URL")
+                scene.userData?.setObject(BirdGameSetting.URL.Arena.rawValue, forKey: "URL")
 //                let transition=SKTransition.moveInWithDirection(.Down, duration: 0.4)
                 //                view?.ignoresSiblingOrder=true
 //                self.view!.presentScene(scene, transition: transition)
@@ -60,7 +56,7 @@ class ArenaEntranceScene: SKScene {
 //                addChild(blackBackground)
                 scene.scaleMode = .Fill
                 scene.userData=NSMutableDictionary()
-                scene.userData?.setObject(URL.Practice.rawValue, forKey: "URL")
+                scene.userData?.setObject(BirdGameSetting.URL.Practice.rawValue, forKey: "URL")
                 view?.presentScene(scene)
             }
         }
