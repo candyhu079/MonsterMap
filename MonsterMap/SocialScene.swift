@@ -19,19 +19,19 @@ class SocialScene: SKScene {
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
 //    let headers = ["token":"5566"]
-//    let friendListURL = "http://api.leolin.me/friendList"
-//    let mailListURL = "http://api.leolin.me/receiveMail"
-//    let inviteListURL = "http://api.leolin.me/beInvitedList"
-//    let deleteFriendURL = "http://api.leolin.me/deleteFriend"
-//    let confirmInvitedURL = "http://api.leolin.me/confirmInvited"
-//    let sendMailURL = "http://api.leolin.me/sendMail"
+    let friendListURL = "http://api.leolin.me/friendList"
+    let mailListURL = "http://api.leolin.me/receiveMail"
+    let inviteListURL = "http://api.leolin.me/beInvitedList"
+    let deleteFriendURL = "http://api.leolin.me/deleteFriend"
+    let confirmInvitedURL = "http://api.leolin.me/confirmInvited"
+    let sendMailURL = "http://api.leolin.me/sendMail"
     
-    let friendListURL = "http://192.168.197.112:8080/friendList"
-    let mailListURL = "http://192.168.197.112:8080/receiveMail"
-    let inviteListURL = "http://192.168.197.112:8080/beInvitedList"
-    let deleteFriendURL = "http://192.168.197.112:8080/deleteFriend"
-    let confirmInvitedURL = "http://192.168.197.112:8080/confirmInvited"
-    let sendMailURL = "http://192.168.197.112:8080/sendMail"
+//    let friendListURL = "http://192.168.196.48:8080/friendList"
+//    let mailListURL = "http://192.168.196.48:8080/receiveMail"
+//    let inviteListURL = "http://192.168.196.48:8080/beInvitedList"
+//    let deleteFriendURL = "http://192.168.196.48:8080/deleteFriend"
+//    let confirmInvitedURL = "http://192.168.196.48:8080/confirmInvited"
+//    let sendMailURL = "http://192.168.196.48:8080/sendMail"
     
     
     //社群系統主畫面按鈕
@@ -86,7 +86,19 @@ class SocialScene: SKScene {
     
     var timer = NSTimer()
     
+    var voicePlayer:AVAudioPlayer!
+    
     override func didMoveToView(view: SKView) {
+        //Candy Add
+        do{
+            let voiceURL:NSURL = NSBundle.mainBundle().URLForResource("button_press.mp3", withExtension: nil)!
+            try voicePlayer = AVAudioPlayer.init(contentsOfURL: voiceURL)
+            voicePlayer.numberOfLoops = 0;
+            voicePlayer.prepareToPlay()
+        }catch{
+            print("AVAudioSession Error")
+        }
+        
         
         headers=["token":token]
         //社群系統主畫面按鈕
@@ -167,7 +179,7 @@ class SocialScene: SKScene {
                     friendCellNew.userData?.setObject(result[i]["friendId"]!, forKey: "friendId")
 
                     //朋友大頭貼
-                    let friendPictureString = "http://192.168.197.112:8080" + (result[i]["friendPicturePath"]! as! String)
+                    let friendPictureString = "http://api.leolin.me" + (result[i]["friendPicturePath"]! as! String)
                     let url = NSURL(string:friendPictureString)
 //                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         let picData = NSData(contentsOfURL:url!)
@@ -322,6 +334,9 @@ class SocialScene: SKScene {
     
     //各種觸碰指令
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        //Candy Add
+        SoundEffect.shareSound().playSoundEffect(voicePlayer)
+        
         /* Called when a touch begins */
         self.view!.endEditing(true)
         if sendMailPage.hidden == false {

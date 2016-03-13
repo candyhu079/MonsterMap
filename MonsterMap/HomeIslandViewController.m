@@ -9,8 +9,12 @@
 #import "HomeIslandViewController.h"
 #import "Items.h"
 #import "Player.h"
+#import <AVFoundation/AVFoundation.h>
+#import "SoundEffect.h"
 
 @interface HomeIslandViewController ()<UIGestureRecognizerDelegate,NSFetchedResultsControllerDelegate>{
+    
+    AVAudioPlayer * voicePlayer;
     
     Player * player;
     Items * items;
@@ -103,6 +107,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //Candy Add
+    NSURL * voiceURL = [[NSBundle mainBundle] URLForResource:@"button_press.mp3" withExtension:nil];
+    voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
+    voicePlayer.numberOfLoops = 0;
+    [voicePlayer prepareToPlay];
+    
+    
     // Do any additional setup after loading the view.
     player = [Player playerSingleton];
     items = [Items itemsSingleton];
@@ -474,6 +485,7 @@
 
 
 - (IBAction)buildBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     
     //打開或關閉build frame
     if ([buildBtnPressed  isEqual: @"off"]) {
@@ -548,10 +560,14 @@
 
 //按back button 跳回 3個島嶼頁面
 - (IBAction)backBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 //按shop button 跳 商店頁面
 - (IBAction)shopBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * shopStoryBoard = [UIStoryboard storyboardWithName:@"Shop" bundle:nil];
     UIViewController * vc = [shopStoryBoard instantiateViewControllerWithIdentifier:@"ShopPetViewController"];
     [self showViewController:vc sender:nil];
@@ -568,12 +584,16 @@
 }
 
 - (IBAction)settingBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"UserProfile" bundle:nil];
     UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"Setting"];
     [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction)rankBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"ThreeIslands" bundle:nil];
     UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"Leaderboard"];
     [self presentViewController:vc animated:YES completion:nil];

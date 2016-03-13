@@ -34,9 +34,21 @@ class MonsterHandbookScene: SKScene {
     var monsterButtonImage:[MonsterButtonImage] = []
     var headers:[String:String]!
     let token = Player.playerSingleton().userToken
-
+    var voicePlayer:AVAudioPlayer!
+    
 //    var a=0
     override func didMoveToView(view: SKView) {
+        //Candy Add
+        do{
+            let voiceURL:NSURL = NSBundle.mainBundle().URLForResource("button_press.mp3", withExtension: nil)!
+            try voicePlayer = AVAudioPlayer.init(contentsOfURL: voiceURL)
+            voicePlayer.numberOfLoops = 0;
+            voicePlayer.prepareToPlay()
+        }catch{
+            print("AVAudioSession Error")
+        }
+        
+        
         managedObjectContext=appDelegate.managedObjectContext
         headers=["token":token]
         itemFrameNode=childNodeWithName("monsterHandbookItemFrame") as! SKSpriteNode
@@ -165,6 +177,9 @@ class MonsterHandbookScene: SKScene {
         let locationInItemFrame=touches.first?.locationInNode(itemFrameNode)
         
         if touchBeganLocation == location{
+            //Candy Add
+            SoundEffect.shareSound().playSoundEffect(voicePlayer)
+            
             if nodeTouchedName == "backButton"{
                 //過場效果
                 let transition = CATransition()

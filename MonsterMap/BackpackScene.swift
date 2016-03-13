@@ -69,8 +69,19 @@ class BackpackScene: SKScene {
     var decorationFirstShow=true
     let token = Player.playerSingleton().userToken
     weak var backPackDelegate:BackpackSceneDelegate?
+    var voicePlayer:AVAudioPlayer!
     
     override func didMoveToView(view: SKView) {
+        //Candy Add
+        do{
+            let voiceURL:NSURL = NSBundle.mainBundle().URLForResource("button_press.mp3", withExtension: nil)!
+            try voicePlayer = AVAudioPlayer.init(contentsOfURL: voiceURL)
+            voicePlayer.numberOfLoops = 0;
+            voicePlayer.prepareToPlay()
+        }catch{
+           print("AVAudioSession Error")
+        }
+        
         managedObjectContext=appDelegate.managedObjectContext
         headers=["token":token]
         
@@ -286,6 +297,9 @@ class BackpackScene: SKScene {
         touchBeganLocation=touches.first?.locationInNode(self)
     }
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        //Candy Add
+        SoundEffect.shareSound().playSoundEffect(voicePlayer)
+        
         let location=touches.first?.locationInNode(self)
         let nodeTouched=nodeAtPoint(location!)
         let nodeTouchedName=nodeTouched.name
@@ -396,7 +410,7 @@ class BackpackScene: SKScene {
                     }
                 }
             }else if nodeTouchedName == "monsterFightSet"{
-                userTouchedFightSet()
+               userTouchedFightSet()
             }else if nodeTouchedName == "sellMonsterButton"{
                 for a in monsterItem.children{
                     if a.userData?.objectForKey("status")?.integerValue == 0{

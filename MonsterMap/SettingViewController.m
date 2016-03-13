@@ -22,14 +22,14 @@
 
 typedef void (^CompletionBlock)(NSError * error,id result);
 
-//#define BASE_URL @"http://api.leolin.me"
-#define BASE_URL @"http://192.168.197.112:8080"
+#define BASE_URL @"http://api.leolin.me"
+//#define BASE_URL @"http://192.168.196.48:8080"
 #define CHANGEPASSWORD_URL [BASE_URL stringByAppendingPathComponent:@"changePassword"]
 #define LOGOUT_URL [BASE_URL stringByAppendingPathComponent:@"logout"]
 
 @interface SettingViewController ()<UITextFieldDelegate>
 {
-//    AVAudioPlayer * voicePlayer;
+    AVAudioPlayer * voicePlayer;
     Player * player;
 }
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *settingLabelToTopConstraint;
@@ -95,10 +95,16 @@ typedef void (^CompletionBlock)(NSError * error,id result);
     }else {
         self.settingLabelToTopConstraint.constant = 170;
     }
+    
+    NSURL * voiceURL = [[NSBundle mainBundle] URLForResource:@"button_press.mp3" withExtension:nil];
+    voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
+    voicePlayer.numberOfLoops = 0;
+    [voicePlayer prepareToPlay];
 
 }
 
 - (IBAction)backButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -176,17 +182,19 @@ typedef void (^CompletionBlock)(NSError * error,id result);
 
 - (IBAction)contactUsButtonPressed:(id)sender {
     NSString * urlString = @"https://www.facebook.com/hu.mei.16";
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     
     [[UIApplication sharedApplication] openURL: [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]]];
 
 }
 
 - (IBAction)changePasswordButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     [self changePasswordFrameHidden:false];
 }
 
 - (IBAction)logoutButtonPressed:(id)sender {
-    //寫登出api
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     player = [Player playerSingleton];
     
     [self doHttpPost:LOGOUT_URL token:player.userToken parameter:nil completion:^(NSError *error, id result) {
@@ -205,6 +213,8 @@ typedef void (^CompletionBlock)(NSError * error,id result);
 }
 
 - (IBAction)okButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     NSString * password = self.enterOldPasswordTextField.text;
     NSString * newPassword = self.enterNewPasswordTextField.text;
     NSString * checkNewPassword = self.checkNewPasswordTextField.text;
@@ -250,11 +260,13 @@ typedef void (^CompletionBlock)(NSError * error,id result);
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     [self changePasswordFrameHidden:true];
     self.infoLabel.hidden = true;
 }
 
 - (IBAction)changePasswordOkButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
     self.changePasswordOkLabel.hidden = true;
     self.changePasswordOkImageView.hidden = true;
     self.changePasswordOkButton.hidden = true;

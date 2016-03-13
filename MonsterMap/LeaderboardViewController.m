@@ -10,6 +10,8 @@
 #import "AFNetworking.h"
 #import "Player.h"
 #import "LeaderboardTableViewCell.h"
+#import <AVFoundation/AVFoundation.h>
+#import "SoundEffect.h"
 
 //#define TOKEN   @"123"
 
@@ -18,6 +20,7 @@
 {
     //Candy Add
     Player * player;
+    AVAudioPlayer * voicePlayer;
     
     NSMutableDictionary * leaderboardJson;
     NSMutableDictionary * leaderboard;
@@ -63,7 +66,10 @@
     player = [Player playerSingleton];
     self.leaderboardTableView.backgroundColor = [UIColor clearColor];
 
-    
+    NSURL * voiceURL = [[NSBundle mainBundle] URLForResource:@"button_press.mp3" withExtension:nil];
+    voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
+    voicePlayer.numberOfLoops = 0;
+    [voicePlayer prepareToPlay];
     
     //建立資料庫的連線
     AFHTTPRequestOperationManager * manager = [AFHTTPRequestOperationManager manager];
@@ -71,7 +77,7 @@
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     [manager.requestSerializer setValue:player.userToken forHTTPHeaderField:@"token"];
     
-    [manager POST:@"http://192.168.197.112:8080/rank" parameters:nil success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
+    [manager POST:@"http://api.leolin.me/rank" parameters:nil success:^(AFHTTPRequestOperation * _Nonnull operation, id  _Nonnull responseObject) {
         
         NSError * error;
         NSData * data = [NSData dataWithData:responseObject];
@@ -143,7 +149,7 @@
 //    }
     
     //textLabel顯示名次
-    cell.rankLabel.text = [NSString stringWithFormat:@" %ld ",indexPath.row + 1];
+    cell.rankLabel.text = [NSString stringWithFormat:@" %d ",indexPath.row + 1];
     //detailLabel顯示玩家ID
     cell.nicknameLabel.text = [NSString stringWithFormat: @"%@", [displayArray objectAtIndex:indexPath.row]];
     cell.backgroundColor = [UIColor clearColor];
@@ -169,6 +175,8 @@
 }
 
 - (IBAction)practiceModeWinRateBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     //原本顯示的陣列初始化後，將practiceModeWinRateArray寫入並更新tableview的資料
     displayArray = [[NSMutableArray alloc]initWithArray:practiceModeWinRateNicknameArray];
     pictureArray = [[NSMutableArray alloc]initWithArray:practiceModeWinRatePicPathArray];
@@ -178,6 +186,8 @@
 }
 
 - (IBAction)rankBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     //原本顯示的陣列初始化後，將rankArray寫入並更新tableview的資料
     displayArray = [[NSMutableArray alloc]initWithArray:rankNicknameArray];
     pictureArray = [[NSMutableArray alloc]initWithArray:rankPicPathArray];
@@ -187,6 +197,8 @@
 }
 
 - (IBAction)monsterQuantityBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+
     //原本顯示的陣列初始化後，將monsterQuantityArray的陣列寫入並更新tableview的資料
     displayArray = [[NSMutableArray alloc]initWithArray:monsterQuantityNicknameArray];
     pictureArray = [[NSMutableArray alloc]initWithArray:monsterQuantityPicPathArray];
@@ -196,6 +208,8 @@
 }
 
 - (IBAction)monsterTotalLevelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+
     //原本顯示的陣列初始化後，將monsterTotalLevelArray寫入並更新tableview的資料
     displayArray = [[NSMutableArray alloc]initWithArray:monsterTotalLevelNicknameArray];
     pictureArray = [[NSMutableArray alloc]initWithArray:monsterTotalLevelPicPathArray];
@@ -205,6 +219,8 @@
 }
 
 - (IBAction)defeatedMonsterBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+
     //原本顯示的陣列初始化後，將defeatedMonsterArray寫入並更新tableview的資料
     displayArray = [[NSMutableArray alloc]initWithArray:defeatedMonsterNicknameArray];
     pictureArray = [[NSMutableArray alloc]initWithArray:defeatedMonsterPicPathArray];
@@ -213,6 +229,8 @@
     [self showButtonRed:self.defeatMonsterButtonRed];
 }
 - (IBAction)backButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

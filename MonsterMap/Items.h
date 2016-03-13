@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-//#define BASE_URL                @"http://api.leolin.me"
-#define BASE_URL                @"http://192.168.197.112:8080"
+#define BASE_URL                @"http://api.leolin.me"
+//#define BASE_URL                @"http://192.168.196.48:8080"
 #define ITEM_URL                [BASE_URL stringByAppendingPathComponent:@"item"]
 #define BUYCOIN_URL             [BASE_URL stringByAppendingPathComponent:@"shopDiamond"]
 #define SHOPCOINDECORATION_URL  [BASE_URL stringByAppendingPathComponent:@"shopCoinDecoration"]

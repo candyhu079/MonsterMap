@@ -11,6 +11,8 @@
 #import "Items.h"
 #import <AFNetworking/AFNetworking.h>
 #import <StoreKit/StoreKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import "SoundEffect.h"
 
 @interface ShopPetViewController ()<SKProductsRequestDelegate,SKPaymentTransactionObserver>
 {
@@ -24,6 +26,7 @@
     NSMutableArray * itemArray;
     NSArray * diamondBtnArray;
     NSArray * diamondArray;
+    AVAudioPlayer * voicePlayer;
 }
 
 //金幣、鑽石數量label
@@ -98,6 +101,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //Candy Add
+    NSURL * voiceURL = [[NSBundle mainBundle] URLForResource:@"button_press.mp3" withExtension:nil];
+    voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
+    voicePlayer.numberOfLoops = 0;
+    [voicePlayer prepareToPlay];
+    
+    
     [self hideBuySubmitFrame];
     [self hideBuyCoinFrame];
     [self hideBuyAlertFrame];
@@ -231,6 +241,8 @@
 }
 //特定商品購買btn點擊
 - (IBAction)buyBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self showBuySubmitFrame];
     NSLog(@"sender tag:%ld",(long)[sender tag]);
     if ([sender tag] == 0) {
@@ -272,6 +284,8 @@
 }
 //確定購買特定商品
 - (IBAction)buySubmitBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([player.coin intValue] < [_productPriceLabel.text intValue]) {
         [self hideBuySubmitFrame];
         [self showBuyAlertFrame];
@@ -288,18 +302,26 @@
 }
 //取消確定購買特定商品
 - (IBAction)buyCancelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuySubmitFrame];
 }
 //點擊購買金幣btn
 - (IBAction)buyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self showBuyCoinFrame];
 }
 //取消購買金幣btn
 - (IBAction)buyCoinFrameCancelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuyCoinFrame];
 }
 //確定購買coin1 btn
 - (IBAction)buyCoin1BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 1) {
         needDiamondValue = 1;
         buyCoinsQuantity = 100;
@@ -310,6 +332,8 @@
 }
 //確定購買coin2 btn
 - (IBAction)buyCoin2BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([player.diamond intValue] >= 5) {
         needDiamondValue = 5;
         buyCoinsQuantity = 700;
@@ -320,6 +344,8 @@
 }
 //確定購買coin3 btn
 - (IBAction)buyCoin3BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 10) {
         needDiamondValue = 10;
         buyCoinsQuantity = 1500;
@@ -330,6 +356,8 @@
 }
 //確定購買coin4 btn
 - (IBAction)buyCoin4BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 15) {
         needDiamondValue = 15;
         buyCoinsQuantity = 2500;
@@ -340,6 +368,8 @@
 }
 //確定購買coin5 btn
 - (IBAction)buyCoin5BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 30) {
         needDiamondValue = 30;
         buyCoinsQuantity = 5500;
@@ -350,6 +380,8 @@
 }
 //確定購買coin6 btn
 - (IBAction)buyCoin6BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 50) {
         needDiamondValue = 50;
         [self showComfirmBuyCoinFrame];
@@ -359,17 +391,25 @@
 }
 //點擊購買鑽石btn
 - (IBAction)buyDiamondBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self showBuyDiamondFrame];
 }
 //取消購買鑽石btn
 - (IBAction)buyDiamondFrameCancelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuyDiamondFrame];
 }
 //關閉鑽石數量不夠視窗btn
 - (IBAction)noDiamondAdmitBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideNoDiamondFrame];
 }
 - (IBAction)buyAlertAdmitBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuyAlertFrame];
 }
 -(void)hideBuyAlertFrame {
@@ -384,10 +424,14 @@
 }
 //關閉購買鑽石視窗btn
 - (IBAction)cancelBuyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideComfirmBuyCoinFrame];
 }
 //點擊確定confirm購買金幣
 - (IBAction)checkAdmitBuyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     player.diamond = [NSNumber numberWithInt:([player.diamond intValue] - needDiamondValue)];
     _diamondLabel.text = [NSString stringWithFormat:@"%@",player.diamond];
     _coinLabel.text = [NSString stringWithFormat:@"%d",[player.coin intValue] + buyCoinsQuantity];
@@ -525,6 +569,8 @@
 }
 
 - (IBAction)backBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (void)didReceiveMemoryWarning {

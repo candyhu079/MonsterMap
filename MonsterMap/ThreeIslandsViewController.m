@@ -13,6 +13,7 @@
 #import "MonsterMap-Swift.h"
 #import "ViewController.h"
 #import "Music.h"
+#import "SoundEffect.h"
 
 @interface ThreeIslandsViewController ()<BackpackSceneDelegate>{
     Player * player;
@@ -20,6 +21,7 @@
     int needDiamondValue;
     int buyCoinsQuantity;
     BackpackScene * theObject;
+    AVAudioPlayer * voicePlayer;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImage;
@@ -59,6 +61,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //Candy Add
+    NSURL * voiceURL = [[NSBundle mainBundle] URLForResource:@"button_press.mp3" withExtension:nil];
+    voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
+    voicePlayer.numberOfLoops = 0;
+    [voicePlayer prepareToPlay];
+    
+    
     [self hideBuyCoinFrame];
     [self hideBuyDiamondFrame];
     [self hideNoDiamondFrame];
@@ -97,6 +107,8 @@
 }
 
 - (IBAction)homeIslandBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     //按homeIsland button 跳到 Home島嶼頁面
     UIStoryboard * homeIslandStoryBoard = [UIStoryboard storyboardWithName:@"HomeIsland" bundle:nil];
     UIViewController * vc = [homeIslandStoryBoard instantiateViewControllerWithIdentifier:@"HomeIslandViewController"];
@@ -105,14 +117,20 @@
 }
 //點擊購買金幣btn
 - (IBAction)buyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self showBuyCoinFrame];
 }
 //取消購買金幣btn
 - (IBAction)buyCoinFrameCancelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuyCoinFrame];
 }
 //確定購買coin1 btn
 - (IBAction)buyCoin1BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 1) {
         needDiamondValue = 1;
         buyCoinsQuantity = 100;
@@ -123,6 +141,8 @@
 }
 //確定購買coin2 btn
 - (IBAction)buyCoin2BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 5) {
         needDiamondValue = 5;
         buyCoinsQuantity = 700;
@@ -133,6 +153,8 @@
 }
 //確定購買coin3 btn
 - (IBAction)buyCoin3BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 10) {
         needDiamondValue = 10;
         buyCoinsQuantity = 1500;
@@ -143,6 +165,8 @@
 }
 //確定購買coin4 btn
 - (IBAction)buyCoin4BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 15) {
         needDiamondValue = 15;
         buyCoinsQuantity = 2500;
@@ -153,6 +177,8 @@
 }
 //確定購買coin5 btn
 - (IBAction)buyCoin5BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 30) {
         needDiamondValue = 30;
         buyCoinsQuantity = 5500;
@@ -163,6 +189,8 @@
 }
 //確定購買coin6 btn
 - (IBAction)buyCoin6BtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     if ([_diamondLabel.text intValue] >= 50) {
         needDiamondValue = 50;
         buyCoinsQuantity = 1000;
@@ -173,10 +201,14 @@
 }
 //點擊購買鑽石btn
 - (IBAction)buyDiamondBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self showBuyDiamondFrame];
 }
 //取消購買鑽石btn
 - (IBAction)buyDiamondFrameCancelBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideBuyDiamondFrame];
 }
 - (IBAction)buyDiamond1BtnPressed:(id)sender {
@@ -238,6 +270,8 @@
 }
 //關閉鑽石數量不夠視窗btn
 - (IBAction)noDiamondAdmitBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideNoDiamondFrame];
 }
 //隱藏鑽石數量不夠視窗
@@ -252,6 +286,8 @@
 }
 //點擊確定confirm購買金幣
 - (IBAction)checkAdmitBuyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     player.diamond = [NSNumber numberWithInt:([player.diamond intValue] - needDiamondValue)];
     _diamondLabel.text = [NSString stringWithFormat:@"%@",player.diamond];
     _coinLabel.text = [NSString stringWithFormat:@"%d",[player.coin intValue] + buyCoinsQuantity];
@@ -260,6 +296,8 @@
 }
 //關閉購買鑽石視窗btn
 - (IBAction)cancelComfirmBuyCoinBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     [self hideComfirmBuyCoinFrame];
 }
 //隱藏confirm購買鑽石視窗
@@ -298,6 +336,8 @@
     }];
 }
 - (IBAction)shopBtnPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     //跳到商店
     UIStoryboard * shopPetStoryboard = [UIStoryboard storyboardWithName:@"Shop" bundle:nil];
     UIViewController * vc = [shopPetStoryboard instantiateViewControllerWithIdentifier:@"ShopPetViewController"];
@@ -312,18 +352,24 @@
 #pragma mark - Candy Add
 
 - (IBAction)goUserProfileButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"UserProfile" bundle:nil];
     UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"UserProfile"];
     [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction)goSettingButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"UserProfile" bundle:nil];
     UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"Setting"];
     [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction)goLeaderboardButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"ThreeIslands" bundle:nil];
     UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"Leaderboard"];
     [self presentViewController:vc animated:YES completion:nil];
@@ -374,6 +420,8 @@
     [self presentViewController:mapvc animated:TRUE completion:nil];
 }
 - (IBAction)goBackpackButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     CGRect viewRect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     SKView * view=[[SKView alloc]initWithFrame:viewRect];
     BackpackScene *scene=[BackpackScene nodeWithFileNamed:@"BackpackScene"];
@@ -390,6 +438,8 @@
     [self.view addSubview:view];
 }
 - (IBAction)goHandbookButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     CGRect viewRect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     SKView * view=[[SKView alloc]initWithFrame:viewRect];
     view.ignoresSiblingOrder=true;
@@ -407,6 +457,8 @@
     
 }
 - (IBAction)friendButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     CGRect viewRect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     SKView * view=[[SKView alloc]initWithFrame:viewRect];
     [self.view addSubview:view];
@@ -417,6 +469,8 @@
     [view presentScene:scene];
 }
 - (IBAction)mailButtonPressed:(id)sender {
+    [[SoundEffect shareSound] playSoundEffect:voicePlayer];
+    
     CGRect viewRect=CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     SKView * view=[[SKView alloc]initWithFrame:viewRect];
     [self.view addSubview:view];

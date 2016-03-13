@@ -15,8 +15,8 @@
 
 typedef void (^CompletionBlock)(NSError * error,id result);
 
-//#define BASE_URL @"http://api.leolin.me"
-#define BASE_URL @"http://192.168.197.112:8080"
+#define BASE_URL @"http://api.leolin.me"
+//#define BASE_URL @"http://192.168.196.48:8080"
 #define USERPROFILE_URL [BASE_URL stringByAppendingPathComponent:@"userProfile"]
 #define CHANGEPHOTO_URL [BASE_URL stringByAppendingPathComponent:@"changePhoto"]
 #define PICTUREBASE64 @"pictureBase64"
@@ -59,7 +59,6 @@ typedef void (^CompletionBlock)(NSError * error,id result);
     voicePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:voiceURL error:nil];
     voicePlayer.numberOfLoops = 0;
     [voicePlayer prepareToPlay];
-//    [[Music shareMusic] playMusic:voicePlayer];
     
     CGSize result = [[UIScreen mainScreen] bounds].size;
     if (result.height == 480) {
